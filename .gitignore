@@ -1,0 +1,15 @@
+# Secrets
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+
+# Build outputs (optional - keep only docs/)
+dist/
+out/
+
+# IDE
+.vscode/
+.idea/

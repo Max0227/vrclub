@@ -1,0 +1,34 @@
+User-agent: *
+Allow: /
+Allow: /games
+Allow: /prices
+Allow: /loyalty
+Allow: /forum
+Allow: /forum/
+Allow: /forum/category/
+Allow: /forum/thread/
+Disallow: /admin
+Disallow: /loyalty/admin
+Disallow: /loyalty/admin-scan
+
+Sitemap: https://paradoxvr.ru/sitemap.xml
+
+# Yandex
+User-agent: Yandex
+Allow: /
+Allow: /forum
+Allow: /forum/
+Allow: /forum/category/
+Allow: /forum/thread/
+Disallow: /admin
+Disallow: /loyalty/admin
+Disallow: /loyalty/admin-scan
+Host: paradoxvr.ru
+
+# Google
+User-agent: Googlebot
+Allow: /
+Allow: /forum
+Allow: /forum/category/
+Allow: /forum/thread/
+Crawl-delay: 1
