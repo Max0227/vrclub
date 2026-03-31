@@ -14,7 +14,7 @@ export const vrGames: Game[] = [
     category: 'VR',
     emoji: '🏭',
     desc: 'В будущем роботы заменили людей, а работа стала музейным экспонатом. Примерь роль офисного клерка, повара или автомеханика — кидай предметы, варишь кофе и устраиваешь хаос. Идеально для первого знакомства с VR.',
-    image: 'https://readdy.ai/api/search-image?query=futuristic%20cartoon%20office%20robots%20holographic%20screens%20colorful%20humorous%20virtual%20reality%20workplace%20bright%20pop%20art%20style&width=400&height=280&seq=vr_job_x01&orientation=landscape',
+    image: '/images/games/vr/job-simulator.jpg',
   },
   {
     id: 2,
@@ -22,7 +22,7 @@ export const vrGames: Game[] = [
     category: 'VR',
     emoji: '🐱',
     desc: 'Стань котом и устрой настоящий домашний хаос! Роняй вещи с полок, царапай мебель и веди себя ровно так, как ведут себя коты. Безумно смешная VR-игра с интерактивной физикой каждого предмета.',
-    image: 'https://readdy.ai/api/search-image?query=cute%20funny%20cat%20knocking%20things%20off%20table%20colorful%20room%20cartoon%20style%20first%20person%20paw%20view%20chaos%20humor%20bright%20colors&width=400&height=280&seq=vr_cat_x02&orientation=landscape',
+    image: '/images/games/vr/i-am-cat.jpg',
   },
   {
     id: 3,
@@ -30,7 +30,7 @@ export const vrGames: Game[] = [
     category: 'VR',
     emoji: '🏝️',
     desc: 'Очнись на необитаемом острове с единственным другом — крабом по имени Skullface. Ищи еду, строй укрытие, наслаждайся тропическими закатами. Расслабленный VR-симулятор выживания с юмором.',
-    image: 'https://readdy.ai/api/search-image?query=tropical%20island%20survival%20beach%20crystal%20blue%20water%20palm%20trees%20cartoon%20style%20bright%20sunshine%20colorful%20sky%20first%20person%20view&width=400&height=280&seq=vr_isl_x03&orientation=landscape',
+    image: '/images/games/vr/island-time.jpg',
   },
   {
     id: 4,
@@ -38,7 +38,7 @@ export const vrGames: Game[] = [
     category: 'VR',
     emoji: '🧲',
     desc: 'Зомби лезут в твою квартиру — хватай всё подряд и кидай в них! Телевизоры, холодильники, цветочные горшки — в ход идёт каждый предмет. Безумный и невероятно смешной VR-экшен для компании.',
-    image: 'https://readdy.ai/api/search-image?query=cartoon%20zombie%20horde%20outside%20apartment%20building%20objects%20flying%20balcony%20window%20throwing%20chaos%20fun%20colorful%20game%20scene&width=400&height=280&seq=vr_thr_x04&orientation=landscape',
+    image: '/images/games/vr/throw-anything.jpg',
   },
   {
     id: 5,
@@ -46,7 +46,7 @@ export const vrGames: Game[] = [
     category: 'VR',
     emoji: '🚀',
     desc: 'Застрял на высоте сотен метров на орбитальной платформе — реши головоломки и найди путь к спасению. Настоящий VR-аттракцион для смелых: захватывающий дух вид вниз и нарастающее напряжение.',
-    image: 'https://readdy.ai/api/search-image?query=rocket%20launch%20pad%20extreme%20height%20open%20space%20dark%20sky%20neon%20glow%20sci-fi%20thriller%20fear%20atmosphere%20space%20station%20dramatic%20view&width=400&height=280&seq=vr_ext_x05&orientation=landscape',
+    image: '/images/games/vr/extreme-escape.jpg',
   },
   {
     id: 6,
@@ -54,7 +54,7 @@ export const vrGames: Game[] = [
     category: 'VR',
     emoji: '🔫',
     desc: 'Быстрый мультиплеерный VR-шутер в стиле киберпанк. Летай по аренам в нулевой гравитации, стреляй из футуристического оружия, сражайся команда на команду в реальном времени.',
-    image: 'https://readdy.ai/api/search-image?query=futuristic%20shooter%20arena%20neon%20lights%20weapons%20sci-fi%20colorful%20combat%20cyberpunk%20multiplayer%20action%20game%20bright%20colorful%20battlefield&width=400&height=280&seq=vr_gun_x06&orientation=landscape',
+    image: '/images/games/vr/gun-raiders.jpg',
   },
   {
     id: 7,
@@ -62,7 +62,7 @@ export const vrGames: Game[] = [
     category: 'VR',
     emoji: '🧗',
     desc: 'Почувствуй настоящий адреналин скалолазания без страховки! Карабкайся по горным вершинам, отвесным скалам и небоскрёбам, цепляясь пальцами за каждый уступ. Потрясающие виды и реальное сердцебиение.',
-    image: 'https://readdy.ai/api/search-image?query=rock%20climbing%20extreme%20height%20mountain%20cliff%20scenic%20view%20sunset%20hands%20gripping%20rock%20adrenaline%20sport%20realistic%20nature%20landscape&width=400&height=280&seq=vr_clm_x07&orientation=landscape',
+    image: '/images/games/vr/the-climb.jpg',
   },
   {
     id: 8,
@@ -70,7 +70,7 @@ export const vrGames: Game[] = [
     category: 'VR',
     emoji: '🐻',
     desc: 'Жуткий VR-хоррор в тёмном аниматронном ресторане. Выживи пять ночей, следи за камерами видеонаблюдения и скрывайся от страшных роботов-зверей. Только для тех, у кого крепкие нервы!',
-    image: 'https://readdy.ai/api/search-image?query=dark%20creepy%20restaurant%20animatronic%20robot%20bear%20night%20horror%20atmosphere%20security%20desk%20dim%20lighting%20terrifying%20dark%20ambiance&width=400&height=280&seq=vr_fnaf_x08&orientation=landscape',
+    image: '/images/games/vr/five-nights-at-freddys.jpg',
   },
   {
     id: 9,
@@ -78,7 +78,7 @@ export const vrGames: Game[] = [
     category: 'VR',
     emoji: '🥊',
     desc: 'Стань чемпионом бокса как Адонис Крид! Реальные тренировки, виртуальные поединки с настоящей физикой ударов и уклонений. Лучший VR-фитнес и спортивный симулятор — сожжёшь реальные калории.',
-    image: 'https://readdy.ai/api/search-image?query=boxing%20ring%20professional%20fight%20gloves%20punching%20athletic%20sport%20arena%20crowd%20dramatic%20stadium%20lighting%20intense%20match%20action%20sports&width=400&height=280&seq=vr_crd_x09&orientation=landscape',
+    image: '/images/games/vr/creed-rise-to-glory.jpg',
   },
   {
     id: 10,
@@ -86,7 +86,7 @@ export const vrGames: Game[] = [
     category: 'VR',
     emoji: '⚔️',
     desc: 'Культовая VR-ритм-игра — руби летящие блоки световыми мечами точно в такт музыке. Сотни треков разных жанров, несколько уровней сложности. Невероятный кардио-тренинг и море удовольствия для всех возрастов.',
-    image: 'https://readdy.ai/api/search-image?query=two%20glowing%20neon%20lightsabers%20red%20blue%20slicing%20colorful%20flying%20blocks%20dark%20stage%20laser%20music%20rhythm%20game%20cyberpunk%20futuristic&width=400&height=280&seq=vr_bts_x10&orientation=landscape',
+    image: '/images/games/vr/beat-saber.jpg',
   },
   {
     id: 11,
@@ -94,7 +94,7 @@ export const vrGames: Game[] = [
     category: 'VR',
     emoji: '😱',
     desc: 'Встреться лицом к лицу со своими страхами — пауки, высота, тёмные пространства. Тренинг по преодолению фобий в форме VR-игры с нарастающей интенсивностью. Реально меняет отношение к страхам.',
-    image: 'https://readdy.ai/api/search-image?query=dark%20scary%20horror%20environment%20spiders%20cobwebs%20dark%20room%20fear%20atmosphere%20virtual%20horror%20game%20creepy%20dark%20moody%20atmosphere%20neon&width=400&height=280&seq=vr_ff2_x11&orientation=landscape',
+    image: '/images/games/vr/face-fears-ii.jpg',
   },
   {
     id: 12,
@@ -102,7 +102,7 @@ export const vrGames: Game[] = [
     category: 'VR',
     emoji: '🎨',
     desc: 'Настоящий граффити-симулятор в VR: рисуй огромные мурали аэрозолью, смешивай цвета, создавай шедевры уличного искусства. Никаких ограничений и последствий — только чистое творчество.',
-    image: 'https://readdy.ai/api/search-image?query=colorful%20spray%20paint%20graffiti%20street%20art%20urban%20wall%20vibrant%20neon%20colors%20artist%20painting%20mural%20creative%20urban%20art%20bright%20vivid&width=400&height=280&seq=vr_ksp_x12&orientation=landscape',
+    image: '/images/games/vr/kingspray.jpg',
   },
   {
     id: 13,
@@ -110,7 +110,7 @@ export const vrGames: Game[] = [
     category: 'VR',
     emoji: '🗡️',
     desc: 'Полное физическое средневековое сражение в VR. Маши мечом, кидай ножи, кастуй заклинания — никаких кнопок, только реальные движения твоего тела. Один из самых погружающих VR-экшенов.',
-    image: 'https://readdy.ai/api/search-image?query=medieval%20fantasy%20sword%20fight%20dark%20dungeon%20magic%20castle%20warrior%20combat%20first%20person%20sword%20shield%20glowing%20spells%20dark%20atmosphere&width=400&height=280&seq=vr_bls_x13&orientation=landscape',
+    image: '/images/games/vr/blade-and-sorcery.jpg',
   },
   {
     id: 14,
@@ -118,7 +118,7 @@ export const vrGames: Game[] = [
     category: 'VR',
     emoji: '⚔️',
     desc: 'Безумная гладиаторская арена с гипертрофированной физикой боя. Дубины, мечи, цепи — всё летит в дело. Самая смешная и мощная VR-игра для снятия стресса — враги разлетаются как мячики.',
-    image: 'https://readdy.ai/api/search-image?query=cartoon%20gladiator%20arena%20mace%20sword%20chain%20weapon%20colorful%20brutal%20combat%20arena%20warriors%20medieval%20colorful%20fun%20fighting%20game&width=400&height=280&seq=vr_grn_x14&orientation=landscape',
+    image: '/images/games/vr/gorn.jpg',
   },
   {
     id: 15,
@@ -126,7 +126,7 @@ export const vrGames: Game[] = [
     category: 'VR',
     emoji: '🛡️',
     desc: 'Стань гладиатором на аренах Древнего Рима! Сражайся с волнами врагов на песке Колизея, улучшай оружие и доспехи, добивайся славы под рёв восторженной толпы. Историческая VR-боёвка.',
-    image: 'https://readdy.ai/api/search-image?query=ancient%20Rome%20colosseum%20sand%20arena%20gladiator%20battle%20crowd%20epic%20sword%20shield%20combat%20Roman%20amphitheater%20dramatic%20sunset%20sky&width=400&height=280&seq=vr_gld_x15&orientation=landscape',
+    image: '/images/games/vr/gladius.jpg',
   },
   {
     id: 16,
@@ -134,7 +134,7 @@ export const vrGames: Game[] = [
     category: 'VR',
     emoji: '🏖️',
     desc: 'Робот-туроператор устраивает тебе идеальный виртуальный отпуск! Пляж, горы, офисная вечеринка — собирай сувениры, готовь еду, играй с волнами. Расслабляющий и забавный VR от авторов Job Simulator.',
-    image: 'https://readdy.ai/api/search-image?query=colorful%20beach%20resort%20cartoon%20robot%20tourists%20sunny%20tropical%20holiday%20bright%20fun%20cheerful%20relaxing%20activities%20summer%20vibe&width=400&height=280&seq=vr_vac_x16&orientation=landscape',
+    image: '/images/games/vr/vacation-simulator.jpg',
   },
   {
     id: 17,
@@ -142,7 +142,7 @@ export const vrGames: Game[] = [
     category: 'VR',
     emoji: '🍺',
     desc: 'Грандиозная потасовка в баре! Хватай бутылки, стулья, бильярдные кии и устраивай переполох. Хит вечеринок в компании — главный рекордсмен по смеху в нашем клубе.',
-    image: 'https://readdy.ai/api/search-image?query=bar%20fight%20cartoon%20funny%20tavern%20glasses%20bottles%20flying%20chaos%20neon%20bar%20signs%20humor%20dark%20pub%20interior%20colorful%20chaos%20scene&width=400&height=280&seq=vr_dbf_x17&orientation=landscape',
+    image: '/images/games/vr/drunkn-bar-fight.jpg',
   },
   {
     id: 18,
@@ -150,7 +150,7 @@ export const vrGames: Game[] = [
     category: 'VR',
     emoji: '🏓',
     desc: 'Лучший VR-симулятор настольного тенниса с реальной физикой мяча и ракетки. Тренируйся против умного ИИ разных уровней или сражайся онлайн с игроками со всего мира. Точнее реального стола!',
-    image: 'https://readdy.ai/api/search-image?query=table%20tennis%20ping%20pong%20realistic%20match%20table%20net%20ball%20paddle%20indoor%20sports%20arena%20clean%20professional%20court%20sports%20game&width=400&height=280&seq=vr_ett_x18&orientation=landscape',
+    image: '/images/games/vr/eleven-table-tennis.jpg',
   },
   {
     id: 19,
@@ -158,7 +158,7 @@ export const vrGames: Game[] = [
     category: 'VR',
     emoji: '✈️',
     desc: 'Сядь за штурвал биплана Первой мировой войны! Воздушные бои над Европой 1916 года с реалистичной физикой полёта и историческими самолётами союзников и Германии.',
-    image: 'https://readdy.ai/api/search-image?query=biplane%20dogfight%20World%20War%201%20cockpit%20view%20clouds%20air%20combat%20vintage%20aircraft%20explosion%20dramatic%20sky%20aerial%20battle%20historic&width=400&height=280&seq=vr_wp1_x19&orientation=landscape',
+    image: '/images/games/vr/warplanes-ww1.jpg',
   },
   {
     id: 20,
@@ -166,7 +166,7 @@ export const vrGames: Game[] = [
     category: 'VR',
     emoji: '🏂',
     desc: 'Мчись с заснеженных горных склонов в виртуальном сноубординге. Реальные движения тела — наклоняйся, балансируй. Трюки, фристайл-парки и потрясающие горные виды без очереди на подъёмник.',
-    image: 'https://readdy.ai/api/search-image?query=snowboard%20mountain%20slope%20winter%20first%20person%20snow%20spray%20tricks%20speed%20snowy%20mountain%20scenery%20white%20powder%20sport%20extreme%20action&width=400&height=280&seq=vr_snb_x20&orientation=landscape',
+    image: '/images/games/vr/carve-snowboarding.jpg',
   },
   {
     id: 21,
@@ -174,7 +174,7 @@ export const vrGames: Game[] = [
     category: 'VR',
     emoji: '🥋',
     desc: 'Красочный файтинг для всей семьи в духе классических аркад. Простое и понятное управление, весёлые персонажи — идеально для детей и тех, кто впервые надевает VR-шлем.',
-    image: 'https://readdy.ai/api/search-image?query=colorful%20cartoon%20fighting%20game%20characters%20boxing%20arena%20family%20friendly%20sport%20combat%20bright%20vivid%20stage%20fun%20game%20art%20style&width=400&height=280&seq=vr_wif_x21&orientation=landscape',
+    image: '/images/games/vr/wii-fighters.jpg',
   },
   {
     id: 22,
@@ -182,7 +182,7 @@ export const vrGames: Game[] = [
     category: 'VR',
     emoji: '⛷️',
     desc: 'Экстремальный фристайл сноубординг с хафпайпами и трамплинами. Крути сальто в воздухе, выполняй трюки и набирай очки в динамичном зимнем VR-приключении на горных вершинах.',
-    image: 'https://readdy.ai/api/search-image?query=snowboarding%20freestyle%20halfpipe%20aerial%20jump%20winter%20mountain%20sunset%20vibrant%20sky%20sport%20extreme%20action%20speed%20winter%20games&width=400&height=280&seq=vr_sno_x22&orientation=landscape',
+    image: '/images/games/vr/snowboarding.jpg',
   },
   {
     id: 23,
@@ -190,7 +190,7 @@ export const vrGames: Game[] = [
     category: 'VR',
     emoji: '🧝',
     desc: 'Стань эльфийским лучником в древнем магическом лесу. Стреляй из лука с невероятной точностью, уклоняйся от атак врагов и открывай силу древних заклинаний. Фэнтези-VR для любителей лука.',
-    image: 'https://readdy.ai/api/search-image?query=elven%20archer%20fantasy%20forest%20bow%20arrows%20magical%20glowing%20lights%20mystical%20ancient%20trees%20combat%20first%20person%20fantasy%20game%20scene&width=400&height=280&seq=vr_elv_x23&orientation=landscape',
+    image: '/images/games/vr/elven-combat.jpg',
   },
   {
     id: 24,
@@ -198,7 +198,7 @@ export const vrGames: Game[] = [
     category: 'VR',
     emoji: '🎢',
     desc: 'Аттракцион-стрелялка: несись по американским горкам и стреляй по мишеням, роботам и монстрам! Сумасшедшее сочетание адреналина горок и динамичного экшен-шутера.',
-    image: 'https://readdy.ai/api/search-image?query=roller%20coaster%20fast%20speed%20theme%20park%20shooting%20action%20colorful%20tracks%20bright%20lights%20fun%20adventure%20game%20neon%20vibrant%20scene&width=400&height=280&seq=vr_coc_x24&orientation=landscape',
+    image: '/images/games/vr/coaster-combat.jpg',
   },
   {
     id: 25,
@@ -206,7 +206,7 @@ export const vrGames: Game[] = [
     category: 'VR',
     emoji: '🔮',
     desc: 'Стань волшебником в таинственной башне! Смешивай зелья, кастуй заклинания прямо руками, играй с магическими предметами. Лучшая игра для мягкого и впечатляющего знакомства с VR.',
-    image: 'https://readdy.ai/api/search-image?query=wizard%20tower%20magic%20potions%20glowing%20crystal%20ball%20spells%20books%20fantasy%20mystical%20atmosphere%20magical%20particles%20hands%20casting%20spells%20dark&width=400&height=280&seq=vr_wow_x25&orientation=landscape',
+    image: '/images/games/vr/waltz-of-the-wizard.jpg',
   },
   {
     id: 26,
@@ -214,7 +214,7 @@ export const vrGames: Game[] = [
     category: 'VR',
     emoji: '🧟',
     desc: 'Зомби-апокалипсис под палящим солнцем Аризоны. Путешествуй по пустыне с дробовиком, ищи выживших и отстреливай орды нежити. Один из лучших VR-шутеров с полноценной сюжетной кампанией.',
-    image: 'https://readdy.ai/api/search-image?query=post%20apocalyptic%20desert%20zombie%20horde%20dusty%20highway%20gun%20first%20person%20shooter%20survival%20dramatic%20desolate%20landscape%20abandoned&width=400&height=280&seq=vr_azs_x26&orientation=landscape',
+    image: '/images/games/vr/arizona-sunshine.jpg',
   },
   {
     id: 27,
@@ -222,7 +222,7 @@ export const vrGames: Game[] = [
     category: 'VR',
     emoji: '🔴',
     desc: 'Революционный VR-шутер с уникальной механикой: время движется только когда движешься ты! Уклоняйся от пуль, хватай оружие прямо из воздуха и чувствуй себя героем голливудского боевика.',
-    image: 'https://readdy.ai/api/search-image?query=minimalist%20stylized%20low%20poly%20red%20white%20enemies%20slow%20motion%20bullet%20dodge%20matrix%20effect%20abstract%20geometric%20art%20style%20game&width=400&height=280&seq=vr_sht_x27&orientation=landscape',
+    image: '/images/games/vr/superhot-vr.jpg',
   },
   {
     id: 28,
@@ -230,7 +230,7 @@ export const vrGames: Game[] = [
     category: 'VR',
     emoji: '💣',
     desc: 'Серьёзный тактический VR-шутер в духе Counter-Strike. Реалистичная перезарядка руками, командные режимы атака/защита, укрытия и тактика. Для тех, кто хочет настоящего геймплея в VR.',
-    image: 'https://readdy.ai/api/search-image?query=tactical%20military%20shooter%20realistic%20weapons%20urban%20combat%20building%20interior%20dark%20corridor%20counter-strike%20style%20first%20person%20gritty%20action&width=400&height=280&seq=vr_pvl_x28&orientation=landscape',
+    image: '/images/games/vr/pavlov-vr.jpg',
   },
   {
     id: 29,
@@ -238,7 +238,7 @@ export const vrGames: Game[] = [
     category: 'VR',
     emoji: '🦍',
     desc: 'Двигайся как горилла — только руками! Никаких кнопок перемещения, никакой телепортации. Беги, прыгай и карабкайся по джунглям в уникальной мультиплеерной VR-игре. Лучшая кардио-тренировка.',
-    image: 'https://readdy.ai/api/search-image?query=green%20jungle%20forest%20low%20poly%20gorilla%20climbing%20trees%20bright%20colorful%20cartoon%20style%20multiplayer%20game%20fun%20arms%20locomotion%20playful&width=400&height=280&seq=vr_grt_x29&orientation=landscape',
+    image: '/images/games/vr/gorilla-tag.jpg',
   },
 ];
 
@@ -249,7 +249,7 @@ export const ps5Games: Game[] = [
     category: 'PS5',
     emoji: '🚀',
     desc: 'Культовая детективная игра в космосе: один из игроков — предатель-импостор, остальные должны его вычислить. Лучшая мультиплеерная игра для вечеринок и больших компаний.',
-    image: 'https://readdy.ai/api/search-image?query=cartoon%20spaceship%20crew%20colorful%20bean%20characters%20orange%20blue%20red%20space%20station%20bright%20simple%20art%20flat%20design%20social%20game%20vibrant&width=400&height=280&seq=ps5_amu_x30&orientation=landscape',
+    image: '/images/games/ps5/among-us.jpg',
   },
   {
     id: 31,
@@ -257,7 +257,7 @@ export const ps5Games: Game[] = [
     category: 'PS5',
     emoji: '🤖',
     desc: 'Трогательный платформер, предустановленный на каждый PS5. Путешествуй по миру PlayStation, открывай отсылки к 30 годам истории PlayStation. Полностью раскрывает возможности контроллера DualSense.',
-    image: 'https://readdy.ai/api/search-image?query=cute%20blue%20robot%20mascot%20cheerful%20platformer%20world%20bright%20colorful%20cartoon%20PlayStation%20game%20environment%20playful%20shiny%20armor%20fun&width=400&height=280&seq=ps5_ast_x31&orientation=landscape',
+    image: '/images/games/ps5/astro-playroom.jpg',
   },
   {
     id: 32,
@@ -265,7 +265,7 @@ export const ps5Games: Game[] = [
     category: 'PS5',
     emoji: '🥊',
     desc: 'Самый реалистичный симулятор смешанных единоборств с точной физикой ударов, официальными бойцами UFC и режимом карьеры. Почувствуй октагон изнутри в 4K HDR на PS5.',
-    image: 'https://readdy.ai/api/search-image?query=MMA%20octagon%20cage%20UFC%20fight%20realistic%20muscular%20athletes%20combat%20sport%20dramatic%20arena%20lighting%20punch%20kick%20professional%20fighting%20game&width=400&height=280&seq=ps5_ufc_x32&orientation=landscape',
+    image: '/images/games/ps5/ufc-5.jpg',
   },
   {
     id: 33,
@@ -273,7 +273,7 @@ export const ps5Games: Game[] = [
     category: 'PS5',
     emoji: '⚽',
     desc: 'Лучший футбольный симулятор с реалистичной физикой, официальными лигами и всеми командами мира. Играй за любимый клуб, создавай карьеру суперзвезды или соревнуйся онлайн.',
-    image: 'https://readdy.ai/api/search-image?query=football%20soccer%20stadium%20night%20match%20green%20field%20packed%20crowd%20celebrating%20goal%20cinematic%20lighting%20professional%20league%20realistic%20sport&width=400&height=280&seq=ps5_fif_x33&orientation=landscape',
+    image: '/images/games/ps5/fifa-2024.jpg',
   },
   {
     id: 34,
@@ -281,7 +281,7 @@ export const ps5Games: Game[] = [
     category: 'PS5',
     emoji: '🏗️',
     desc: 'Бесплатная королевская битва для всех возрастов: 100 игроков, стройте укрытия, сражайтесь и станьте последним выжившим. Постоянные коллаборации с Marvel, Star Wars и другими вселенными.',
-    image: 'https://readdy.ai/api/search-image?query=colorful%20cartoon%20battle%20royale%20island%20colorful%20characters%20weapons%20building%20structures%20vibrant%20neon%20game%20stylized%20art%20pop%20colors%20action&width=400&height=280&seq=ps5_ftn_x34&orientation=landscape',
+    image: '/images/games/ps5/fortnite.jpg',
   },
   {
     id: 35,
@@ -289,7 +289,7 @@ export const ps5Games: Game[] = [
     category: 'PS5',
     emoji: '🏙️',
     desc: 'Открытый мир Лос-Сантоса на PS5 в 4K 60 FPS. Три главных героя, сотни часов сюжета и полная свобода действий. Один из величайших экшен-боевиков в истории видеоигр.',
-    image: 'https://readdy.ai/api/search-image?query=cinematic%20city%20skyline%20open%20world%20crime%20game%20golden%20sunset%20skyscrapers%20highway%20cars%20aerial%20view%20dramatic%20atmosphere%20Los%20Santos&width=400&height=280&seq=ps5_gta_x35&orientation=landscape',
+    image: '/images/games/ps5/gta-5.jpg',
   },
   {
     id: 36,
@@ -297,7 +297,7 @@ export const ps5Games: Game[] = [
     category: 'PS5',
     emoji: '🧱',
     desc: 'Мир легендарной Horizon Zero Dawn в LEGO-стиле! Строй механических динозавров из кубиков, исследуй красочные локации и наслаждайся пластиковыми приключениями Алой.',
-    image: 'https://readdy.ai/api/search-image?query=LEGO%20bricks%20colorful%20plastic%20toy%20robot%20dinosaur%20mechanical%20creatures%20bright%20adventure%20world%20playful%20cute%20toy%20environment&width=400&height=280&seq=ps5_lgo_x36&orientation=landscape',
+    image: '/images/games/ps5/lego-horizon.jpg',
   },
   {
     id: 37,
@@ -305,7 +305,7 @@ export const ps5Games: Game[] = [
     category: 'PS5',
     emoji: '🕺',
     desc: 'Управляй неуклюжим желеобразным человечком в физических головоломках. Каждый шаг заканчивается смешным падением. Культовая кооперативная игра — вы будете смеяться до слёз.',
-    image: 'https://readdy.ai/api/search-image?query=wobbly%20white%20blob%20ragdoll%20character%20falling%20climbing%20colorful%20cartoon%20puzzle%20environment%20pastel%20colors%20funny%20physics%20humorous%20simple%20game&width=400&height=280&seq=ps5_hff_x37&orientation=landscape',
+    image: '/images/games/ps5/human-fall-flat.jpg',
   },
   {
     id: 38,
@@ -313,7 +313,7 @@ export const ps5Games: Game[] = [
     category: 'PS5',
     emoji: '🏎️',
     desc: 'Уличные гонки с уникальной аниме-стилистикой и граффити-артом. Гоняй по ночному городу, уходи от полиции и становись легендой нелегального автоспорта. Стильно, быстро и красиво.',
-    image: 'https://readdy.ai/api/search-image?query=street%20racing%20car%20drifting%20graffiti%20street%20art%20urban%20night%20neon%20lights%20smoke%20stylized%20anime%20cel%20shading%20colorful%20dark%20city&width=400&height=280&seq=ps5_nfs_x38&orientation=landscape',
+    image: '/images/games/ps5/nfs-unbound.jpg',
   },
   {
     id: 39,
@@ -321,7 +321,7 @@ export const ps5Games: Game[] = [
     category: 'PS5',
     emoji: '🧸',
     desc: 'Исследуй заброшенную фабрику игрушек и выживи против жуткого синего монстра Huggy Wuggy. Захватывающий хоррор-квест с головоломками для любителей острых ощущений.',
-    image: 'https://readdy.ai/api/search-image?query=creepy%20abandoned%20toy%20factory%20dark%20industrial%20eerie%20lighting%20scary%20vintage%20blue%20monster%20horror%20atmosphere%20unsettling%20dark%20halls&width=400&height=280&seq=ps5_pop_x39&orientation=landscape',
+    image: '/images/games/ps5/poppy-playtime.jpg',
   },
   {
     id: 40,
@@ -329,7 +329,7 @@ export const ps5Games: Game[] = [
     category: 'PS5',
     emoji: '🗺️',
     desc: 'Кинематографичное приключение Хлои и Надин в поисках древних сокровищ тропических джунглей. Эффектная стрельба, паркур по руинам, головоломки и захватывающий детективный сюжет.',
-    image: 'https://readdy.ai/api/search-image?query=tropical%20jungle%20ancient%20ruins%20treasure%20hunt%20cinematic%20action%20adventure%20temple%20exploration%20lush%20green%20scenery%20dramatic%20lighting%20movie%20style&width=400&height=280&seq=ps5_unc_x40&orientation=landscape',
+    image: '/images/games/ps5/uncharted.jpg',
   },
 ];
 
@@ -340,7 +340,7 @@ export const mozaGames: Game[] = [
     category: 'MOZA',
     emoji: '🏎️',
     desc: '500+ суперкаров в огромном открытом мире Мексики с джунглями, пустынями, вулканами и пляжами. Дрифт, тюнинг и онлайн-соревнования в лучшем аркадном гоночном симуляторе всех времён.',
-    image: 'https://readdy.ai/api/search-image?query=supercar%20fast%20racing%20open%20world%20sunset%20desert%20mountains%20colorful%20vibrant%20cinematic%20drift%20beautiful%20landscape%20cars%20speed%20wide%20angle&width=400&height=280&seq=mz_fh5_x41&orientation=landscape',
+    image: '/images/games/moza/forza-horizon-5.jpg',
   },
   {
     id: 42,
@@ -348,7 +348,7 @@ export const mozaGames: Game[] = [
     category: 'MOZA',
     emoji: '💥',
     desc: 'Симулятор с невероятно реалистичной мягкой телесной физикой разрушений. Каждое столкновение уникально — мнутся пороги, ломаются оси, рассыпается стекло. Незабываемый опыт краш-тестов.',
-    image: 'https://readdy.ai/api/search-image?query=realistic%20car%20crash%20crumple%20deformation%20physics%20simulation%20metal%20bending%20vehicle%20damage%20dramatic%20impact%20realistic%20automobile%20destruction&width=400&height=280&seq=mz_bmg_x42&orientation=landscape',
+    image: '/images/games/moza/beamng-drive.jpg',
   },
   {
     id: 43,
@@ -356,7 +356,7 @@ export const mozaGames: Game[] = [
     category: 'MOZA',
     emoji: '🏁',
     desc: 'Профессиональный гоночный симулятор с лицензированными Ferrari, Lamborghini, BMW и легендарными трассами мира. Реальная физика шин, телеметрия — выбор профессиональных гонщиков.',
-    image: 'https://readdy.ai/api/search-image?query=professional%20racing%20simulator%20track%20circuit%20Ferrari%20sports%20car%20cockpit%20ultra%20realistic%20graphics%20race%20track%20sunny%20dramatic%20perspective&width=400&height=280&seq=mz_acc_x43&orientation=landscape',
+    image: '/images/games/moza/assetto-corsa.jpg',
   },
   {
     id: 44,
@@ -364,7 +364,7 @@ export const mozaGames: Game[] = [
     category: 'MOZA',
     emoji: '🌧️',
     desc: 'Лучший симулятор ралли с 45+ трассами в Аргентине, Австралии, Польше и Новой Зеландии. Грязь, гравий, лёд, снег — настоящий экстрим со штурманом. Сложно, честно, невероятно.',
-    image: 'https://readdy.ai/api/search-image?query=rally%20car%20muddy%20forest%20track%20rain%20wet%20gravel%20slide%20dramatic%20motion%20fast%20speed%20forest%20rally%20stage%20co-driver%20trees%20dirt%20road&width=400&height=280&seq=mz_drt_x44&orientation=landscape',
+    image: '/images/games/moza/dirt-rally-2.jpg',
   },
 ];
 
