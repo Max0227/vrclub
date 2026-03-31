@@ -1582,14 +1582,27 @@ const AdminDashboard = ({ onLogout }: { onLogout: () => void }) => {
 
 // ── Root Export ───────────────────────────────────────────────────────────────
 const AdminPage = () => {
-  const [authed, setAuthed] = useState(() => sessionStorage.getItem(SESSION_KEY) === '1');
+  const [authed, setAuthed] = useState(() => {
+    // Проверяем обычную сессию
+    const hasSession = sessionStorage.getItem(SESSION_KEY) === '1';
+    // Проверяем флаг из 404.html (для SPA)
+    const hasAdminAccess = sessionStorage.getItem('admin_access') === 'true';
+    return hasSession || hasAdminAccess;
+  });
+
+  const handleLogin = () => {
+    sessionStorage.setItem(SESSION_KEY, '1');
+    sessionStorage.removeItem('admin_access');
+    setAuthed(true);
+  };
 
   const handleLogout = () => {
     sessionStorage.removeItem(SESSION_KEY);
+    sessionStorage.removeItem('admin_access');
     setAuthed(false);
   };
 
-  if (!authed) return <LoginScreen onLogin={() => setAuthed(true)} />;
+  if (!authed) return <LoginScreen onLogin={handleLogin} />;
   return <AdminDashboard onLogout={handleLogout} />;
 };
 

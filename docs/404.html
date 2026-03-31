@@ -5,11 +5,12 @@
     <script>
         var path = window.location.pathname;
         
-        // Если это админка — не перенаправляем, а грузим главный JS
+        // Если это админка — устанавливаем флаг и загружаем главный JS
         if (path === '/admin' || path.startsWith('/admin/')) {
             sessionStorage.setItem('admin_access', 'true');
             var script = document.createElement('script');
             script.type = 'module';
+            // Убедитесь, что имя файла правильное (посмотрите в docs/assets/)
             script.src = '/assets/index-BFEGtiKO.js';
             document.body.appendChild(script);
         } else {
