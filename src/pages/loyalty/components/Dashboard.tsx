@@ -301,8 +301,8 @@ const CardPolicyInfo = () => (
   </div>
 );
 
-
-const ProfileTab = ({ card, onUpdate }: { card: LoyaltyCard; onUpdate: (n: string, p: string) => Promise<{ success: boolean; message: string }> }) => {
+// ProfileTab – с добавленным onCardUpdate
+const ProfileTab = ({ card, onUpdate, onCardUpdate }: { card: LoyaltyCard; onUpdate: (n: string, p: string) => Promise<{ success: boolean; message: string }>; onCardUpdate?: () => void }) => {
   const [name, setName] = useState(card.name);
   const [phone, setPhone] = useState(card.phone);
   const [loading, setLoading] = useState(false);
@@ -316,6 +316,9 @@ const ProfileTab = ({ card, onUpdate }: { card: LoyaltyCard; onUpdate: (n: strin
     const res = await onUpdate(name.trim(), phone.trim());
     setLoading(false);
     setMsg({ success: res.success, text: res.message });
+    if (res.success && onCardUpdate) {
+      onCardUpdate(); // Обновляем карту после успешного сохранения
+    }
     setTimeout(() => setMsg(null), 3000);
   };
 
@@ -923,7 +926,7 @@ const Dashboard = memo(({ card, onClaimToken, onRedeemVr, onRedeemAuto, onLogout
       {/* ── Profile tab ── */}
       {activeTab === 'profile' && (
         <>
-          <ProfileTab card={card} onUpdate={onUpdateProfile} />
+          <ProfileTab card={card} onUpdate={onUpdateProfile} onCardUpdate={onCardUpdate} />
           <CardPolicyInfo />
         </>
       )}

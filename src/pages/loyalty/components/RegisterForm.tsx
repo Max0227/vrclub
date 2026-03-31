@@ -66,11 +66,22 @@ const RegisterForm = memo(({ onRegister, onLogin, onResetPassword }: Props) => {
     setLoading(true);
     const result = await onResetPassword(resetPhone.trim(), resetCode.trim(), resetNewPass.trim());
     setLoading(false);
-    setMsg({ success: result.success, text: result.message });
+    
     if (result.success) {
+      setMsg(null);
       setResetDone(true);
-      setTimeout(() => { setActiveTab('login'); setResetDone(false); setMsg(null); setResetPhone('+7 '); setResetCode(''); setResetNewPass(''); }, 3000);
-    } else { setTimeout(() => setMsg(null), 5000); }
+      setTimeout(() => { 
+        setActiveTab('login'); 
+        setResetDone(false); 
+        setMsg(null); 
+        setResetPhone('+7 '); 
+        setResetCode(''); 
+        setResetNewPass(''); 
+      }, 3000);
+    } else {
+      setMsg({ success: false, text: result.message });
+      setTimeout(() => setMsg(null), 5000);
+    }
   };
 
   return (
