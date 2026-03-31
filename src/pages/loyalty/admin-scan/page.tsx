@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { supabase } from '../../../lib/supabase';
-import { getCardTier } from '../hooks/useLoyalty';
+import { getCardTier } from '../../loyalty/hooks/useLoyalty';
 
 const ADMIN_LOGIN = 'admin';
 const ADMIN_PASSWORD = '02191988';
