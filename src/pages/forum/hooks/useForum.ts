@@ -60,6 +60,7 @@ export interface ForumPost {
 }
 
 const FORUM_USER_KEY = 'paradox_forum_user_v1';
+const SUPABASE_URL = import.meta.env.VITE_PUBLIC_SUPABASE_URL as string;
 
 const mapForumUser = (row: Record<string, unknown>): ForumUser => ({
   id: row.id as string,
@@ -76,15 +77,19 @@ const mapForumUser = (row: Record<string, unknown>): ForumUser => ({
   createdAt: row.created_at as string,
 });
 
-const SUPABASE_URL = import.meta.env.VITE_PUBLIC_SUPABASE_URL as string;
+const avatarColors = ['#00f5ff', '#c084fc', '#f59e0b', '#4ade80', '#ff006e', '#ffd700'];
 
 export const useForum = () => {
   const [forumUser, setForumUser] = useState<ForumUser | null>(null);
   const [loadingAuth, setLoadingAuth] = useState(true);
 
+  // Загрузка пользователя из localStorage
   useEffect(() => {
     const stored = localStorage.getItem(FORUM_USER_KEY);
-    if (!stored) { setLoadingAuth(false); return; }
+    if (!stored) {
+      setLoadingAuth(false);
+      return;
+    }
     try {
       setForumUser(JSON.parse(stored) as ForumUser);
     } catch {
@@ -93,168 +98,211 @@ export const useForum = () => {
     setLoadingAuth(false);
   }, []);
 
+  // Обновление данных пользователя
   const refreshForumUser = useCallback(async (id: string) => {
-    const { data } = await supabase.from('forum_users').select('*').eq('id', id).maybeSingle();
-    if (data) {
-      const user = mapForumUser(data as Record<string, unknown>);
-      setForumUser(user);
-      localStorage.setItem(FORUM_USER_KEY, JSON.stringify(user));
+    try {
+      const { data } = await supabase
+        .from('forum_users')
+        .select('*')
+        .eq('id', id)
+        .maybeSingle();
+      
+      if (data) {
+        const user = mapForumUser(data as Record<string, unknown>);
+        setForumUser(user);
+        localStorage.setItem(FORUM_USER_KEY, JSON.stringify(user));
+      }
+    } catch (error) {
+      console.error('Ошибка обновления пользователя:', error);
     }
   }, []);
 
-  // Login with loyalty card credentials (phone + password)
+  // Вход по клубной карте
   const loginWithCard = useCallback(async (
     phone: string,
     password: string,
   ): Promise<{ success: boolean; message: string; status?: 'pending' | 'approved'; user?: ForumUser }> => {
-    const normalizedPhone = phone.replace(/[\s\-\(\)]/g, '');
-    // Check loyalty card — fetch by phone or email first, then compare password client-side
-    let cardRow: Record<string, unknown> | null = null;
-    const { data: byPhone } = await supabase
-      .from('loyalty_cards')
-      .select('card_number, name, email, phone, password')
-      .eq('phone', normalizedPhone)
-      .maybeSingle();
-    if (byPhone && (byPhone as Record<string, unknown>).password === password) {
-      cardRow = byPhone as Record<string, unknown>;
-    }
-
-    if (!cardRow) {
-      const { data: byEmail } = await supabase
+    try {
+      const normalizedPhone = phone.replace(/[\s\-\(\)]/g, '');
+      let cardRow: Record<string, unknown> | null = null;
+      
+      // Поиск по телефону
+      const { data: byPhone } = await supabase
         .from('loyalty_cards')
         .select('card_number, name, email, phone, password')
-        .eq('email', phone.toLowerCase().trim())
+        .eq('phone', normalizedPhone)
         .maybeSingle();
-      if (byEmail && (byEmail as Record<string, unknown>).password === password) {
-        cardRow = byEmail as Record<string, unknown>;
+      
+      if (byPhone && (byPhone as Record<string, unknown>).password === password) {
+        cardRow = byPhone as Record<string, unknown>;
       }
-    }
 
-    if (!cardRow) return { success: false, message: 'Неверный телефон/email или пароль клубной карты' };
-
-    // Check if forum user exists for this card
-    const { data: existingForumUser } = await supabase
-      .from('forum_users')
-      .select('*')
-      .eq('card_number', cardRow.card_number as string)
-      .maybeSingle();
-
-    if (existingForumUser) {
-      const user = mapForumUser(existingForumUser as Record<string, unknown>);
-      if (!user.isApproved) {
-        return { success: false, message: 'Ваша заявка ожидает одобрения администратора', status: 'pending' };
+      // Если не найден по телефону, пробуем по email
+      if (!cardRow) {
+        const { data: byEmail } = await supabase
+          .from('loyalty_cards')
+          .select('card_number, name, email, phone, password')
+          .eq('email', phone.toLowerCase().trim())
+          .maybeSingle();
+        if (byEmail && (byEmail as Record<string, unknown>).password === password) {
+          cardRow = byEmail as Record<string, unknown>;
+        }
       }
-      setForumUser(user);
-      localStorage.setItem(FORUM_USER_KEY, JSON.stringify(user));
-      return { success: true, message: `Добро пожаловать, ${user.username}!`, user };
-    }
 
-    // Create pending forum user
-    const email = (cardRow.email as string) || `${(cardRow.card_number as string).toLowerCase()}@paradoxvr.ru`;
-    const username = cardRow.name as string;
-    const avatarColors = ['#00f5ff', '#c084fc', '#f59e0b', '#4ade80', '#ff006e', '#ffd700'];
-    const avatarColor = avatarColors[Math.floor(Math.random() * avatarColors.length)];
+      if (!cardRow) {
+        return { success: false, message: 'Неверный телефон/email или пароль клубной карты' };
+      }
 
-    const { data: newUser, error } = await supabase
-      .from('forum_users')
-      .insert({
-        card_number: cardRow.card_number as string,
-        email,
-        username,
-        is_approved: false,
-        avatar_color: avatarColor,
-      })
-      .select('*')
-      .maybeSingle();
+      // Проверяем, есть ли пользователь форума
+      const { data: existingForumUser } = await supabase
+        .from('forum_users')
+        .select('*')
+        .eq('card_number', cardRow.card_number as string)
+        .maybeSingle();
 
-    if (error) return { success: false, message: 'Ошибка создания аккаунта форума' };
+      if (existingForumUser) {
+        const user = mapForumUser(existingForumUser as Record<string, unknown>);
+        if (!user.isApproved) {
+          return { success: false, message: 'Ваша заявка ожидает одобрения администратора', status: 'pending' };
+        }
+        setForumUser(user);
+        localStorage.setItem(FORUM_USER_KEY, JSON.stringify(user));
+        return { success: true, message: `Добро пожаловать, ${user.username}!`, user };
+      }
 
-    // Notify admin
-    try {
-      await fetch(`${SUPABASE_URL}/functions/v1/send-forum-registration`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          username,
+      // Создаём нового пользователя форума
+      const email = (cardRow.email as string) || `${(cardRow.card_number as string).toLowerCase()}@paradoxvr.ru`;
+      const username = cardRow.name as string;
+      const avatarColor = avatarColors[Math.floor(Math.random() * avatarColors.length)];
+
+      const { data: newUser, error } = await supabase
+        .from('forum_users')
+        .insert({
+          card_number: cardRow.card_number as string,
           email,
-          cardNumber: cardRow.card_number as string,
-          phone: cardRow.phone as string,
-        }),
-      });
-    } catch { /* silent */ }
+          username,
+          is_approved: false,
+          avatar_color: avatarColor,
+        })
+        .select('*')
+        .maybeSingle();
 
-    if (newUser) {
-      const user = mapForumUser(newUser as Record<string, unknown>);
-      localStorage.setItem(FORUM_USER_KEY, JSON.stringify(user));
+      if (error) {
+        console.error('Ошибка создания пользователя форума:', error);
+        return { success: false, message: 'Ошибка создания аккаунта форума' };
+      }
+
+      // Уведомление администратора
+      try {
+        await fetch(`${SUPABASE_URL}/functions/v1/send-forum-registration`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username,
+            email,
+            cardNumber: cardRow.card_number as string,
+            phone: cardRow.phone as string,
+          }),
+        });
+      } catch {
+        // Silent fail
+      }
+
+      if (newUser) {
+        const user = mapForumUser(newUser as Record<string, unknown>);
+        localStorage.setItem(FORUM_USER_KEY, JSON.stringify(user));
+      }
+
+      return { success: true, message: 'Заявка отправлена! Ожидайте одобрения администратора', status: 'pending' };
+    } catch (error) {
+      console.error('Ошибка входа по карте:', error);
+      return { success: false, message: 'Ошибка соединения. Попробуйте позже.' };
     }
-
-    return { success: true, message: 'Заявка отправлена! Ожидайте одобрения администратора', status: 'pending' };
   }, []);
 
-  // Register with email (not loyalty card)
+  // Регистрация по email
   const registerEmail = useCallback(async (
     username: string,
     email: string,
     password: string,
   ): Promise<{ success: boolean; message: string }> => {
-    const { data: existing } = await supabase
-      .from('forum_users')
-      .select('id')
-      .eq('email', email.toLowerCase().trim())
-      .maybeSingle();
-    if (existing) return { success: false, message: 'Этот email уже зарегистрирован' };
-
-    const avatarColors = ['#00f5ff', '#c084fc', '#f59e0b', '#4ade80', '#ff006e'];
-    const avatarColor = avatarColors[Math.floor(Math.random() * avatarColors.length)];
-
-    const { error } = await supabase.from('forum_users').insert({
-      email: email.toLowerCase().trim(),
-      username: username.trim(),
-      password,
-      is_approved: false,
-      avatar_color: avatarColor,
-    });
-
-    if (error) return { success: false, message: 'Ошибка регистрации. Попробуйте ещё раз.' };
-
     try {
-      await fetch(`${SUPABASE_URL}/functions/v1/send-forum-registration`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, email, cardNumber: null, phone: null }),
-      });
-    } catch { /* silent */ }
+      const { data: existing } = await supabase
+        .from('forum_users')
+        .select('id')
+        .eq('email', email.toLowerCase().trim())
+        .maybeSingle();
+      
+      if (existing) {
+        return { success: false, message: 'Этот email уже зарегистрирован' };
+      }
 
-    return { success: true, message: 'Заявка отправлена! Ожидайте одобрения администратора.' };
+      const avatarColor = avatarColors[Math.floor(Math.random() * avatarColors.length)];
+
+      const { error } = await supabase.from('forum_users').insert({
+        email: email.toLowerCase().trim(),
+        username: username.trim(),
+        password,
+        is_approved: false,
+        avatar_color: avatarColor,
+      });
+
+      if (error) {
+        console.error('Ошибка регистрации:', error);
+        return { success: false, message: 'Ошибка регистрации. Попробуйте ещё раз.' };
+      }
+
+      // Уведомление администратора
+      try {
+        await fetch(`${SUPABASE_URL}/functions/v1/send-forum-registration`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, email, cardNumber: null, phone: null }),
+        });
+      } catch {
+        // Silent fail
+      }
+
+      return { success: true, message: 'Заявка отправлена! Ожидайте одобрения администратора.' };
+    } catch (error) {
+      console.error('Ошибка регистрации:', error);
+      return { success: false, message: 'Ошибка соединения. Попробуйте позже.' };
+    }
   }, []);
 
-  // Login with email+password (for non-card users)
+  // Вход по email
   const loginEmail = useCallback(async (
     email: string,
     password: string,
   ): Promise<{ success: boolean; message: string; status?: 'pending'; user?: ForumUser }> => {
-    // Fetch user by email first, then compare password client-side
-    // (Supabase anon key may block server-side password filtering)
-    const { data } = await supabase
-      .from('forum_users')
-      .select('*')
-      .eq('email', email.toLowerCase().trim())
-      .maybeSingle();
-    if (!data) return { success: false, message: 'Неверный email или пароль' };
+    try {
+      const { data } = await supabase
+        .from('forum_users')
+        .select('*')
+        .eq('email', email.toLowerCase().trim())
+        .maybeSingle();
+      
+      if (!data) {
+        return { success: false, message: 'Неверный email или пароль' };
+      }
 
-    // Compare password client-side
-    const storedPassword = (data as Record<string, unknown>).password as string | null;
-    if (!storedPassword || storedPassword !== password) {
-      return { success: false, message: 'Неверный email или пароль' };
-    }
+      const storedPassword = (data as Record<string, unknown>).password as string | null;
+      if (!storedPassword || storedPassword !== password) {
+        return { success: false, message: 'Неверный email или пароль' };
+      }
 
-    const user = mapForumUser(data as Record<string, unknown>);
-    if (!user.isApproved) {
-      return { success: false, message: 'Ваша заявка ожидает одобрения администратора', status: 'pending' };
+      const user = mapForumUser(data as Record<string, unknown>);
+      if (!user.isApproved) {
+        return { success: false, message: 'Ваша заявка ожидает одобрения администратора', status: 'pending' };
+      }
+      
+      setForumUser(user);
+      localStorage.setItem(FORUM_USER_KEY, JSON.stringify(user));
+      return { success: true, message: `Добро пожаловать, ${user.username}!`, user };
+    } catch (error) {
+      console.error('Ошибка входа:', error);
+      return { success: false, message: 'Ошибка соединения. Попробуйте позже.' };
     }
-    setForumUser(user);
-    localStorage.setItem(FORUM_USER_KEY, JSON.stringify(user));
-    return { success: true, message: `Добро пожаловать, ${user.username}!`, user };
   }, []);
 
   const logout = useCallback(() => {
@@ -267,82 +315,101 @@ export const useForum = () => {
     localStorage.setItem(FORUM_USER_KEY, JSON.stringify(user));
   }, []);
 
-  // Fetch categories
+  // Получение категорий
   const fetchCategories = useCallback(async (): Promise<ForumCategory[]> => {
-    const { data } = await supabase
-      .from('forum_categories')
-      .select('*')
-      .order('sort_order');
-    return (data || []).map((r) => ({
-      id: r.id as number,
-      name: r.name as string,
-      slug: r.slug as string,
-      description: r.description as string,
-      icon: r.icon as string,
-      color: r.color as string,
-      threadCount: (r.thread_count as number) ?? 0,
-      postCount: (r.post_count as number) ?? 0,
-    }));
+    try {
+      const { data } = await supabase
+        .from('forum_categories')
+        .select('*')
+        .order('sort_order');
+      
+      return (data || []).map((r) => ({
+        id: r.id as number,
+        name: r.name as string,
+        slug: r.slug as string,
+        description: r.description as string,
+        icon: r.icon as string,
+        color: r.color as string,
+        threadCount: (r.thread_count as number) ?? 0,
+        postCount: (r.post_count as number) ?? 0,
+      }));
+    } catch (error) {
+      console.error('Ошибка загрузки категорий:', error);
+      return [];
+    }
   }, []);
 
-  // Fetch threads for a category
+  // Получение тем категории
   const fetchThreads = useCallback(async (categorySlug: string): Promise<ForumThread[]> => {
-    const { data } = await supabase
-      .from('forum_threads')
-      .select('*')
-      .eq('category_slug', categorySlug)
-      .order('is_pinned', { ascending: false })
-      .order('last_post_at', { ascending: false });
-    return (data || []).map((r) => ({
-      id: r.id as string,
-      categoryId: r.category_id as number,
-      categorySlug: r.category_slug as string,
-      title: r.title as string,
-      content: r.content as string,
-      authorId: r.author_id as string | null,
-      authorName: r.author_name as string,
-      authorColor: r.author_color as string,
-      views: (r.views as number) ?? 0,
-      postCount: (r.post_count as number) ?? 1,
-      isPinned: r.is_pinned as boolean,
-      isLocked: r.is_locked as boolean,
-      lastPostAt: r.last_post_at as string,
-      lastPostAuthor: r.last_post_author as string | null,
-      createdAt: r.created_at as string,
-    }));
+    try {
+      const { data } = await supabase
+        .from('forum_threads')
+        .select('*')
+        .eq('category_slug', categorySlug)
+        .order('is_pinned', { ascending: false })
+        .order('last_post_at', { ascending: false });
+      
+      return (data || []).map((r) => ({
+        id: r.id as string,
+        categoryId: r.category_id as number,
+        categorySlug: r.category_slug as string,
+        title: r.title as string,
+        content: r.content as string,
+        authorId: r.author_id as string | null,
+        authorName: r.author_name as string,
+        authorColor: r.author_color as string,
+        views: (r.views as number) ?? 0,
+        postCount: (r.post_count as number) ?? 1,
+        isPinned: r.is_pinned as boolean,
+        isLocked: r.is_locked as boolean,
+        lastPostAt: r.last_post_at as string,
+        lastPostAuthor: r.last_post_author as string | null,
+        createdAt: r.created_at as string,
+      }));
+    } catch (error) {
+      console.error('Ошибка загрузки тем:', error);
+      return [];
+    }
   }, []);
 
-  // Fetch recent threads across all categories
+  // Получение последних тем
   const fetchRecentThreads = useCallback(async (limit = 10): Promise<ForumThread[]> => {
-    const { data } = await supabase
-      .from('forum_threads')
-      .select('*')
-      .order('last_post_at', { ascending: false })
-      .limit(limit);
-    return (data || []).map((r) => ({
-      id: r.id as string,
-      categoryId: r.category_id as number,
-      categorySlug: r.category_slug as string,
-      title: r.title as string,
-      content: r.content as string,
-      authorId: r.author_id as string | null,
-      authorName: r.author_name as string,
-      authorColor: (r.author_color as string) ?? '#00f5ff',
-      views: (r.views as number) ?? 0,
-      postCount: (r.post_count as number) ?? 1,
-      isPinned: r.is_pinned as boolean,
-      isLocked: r.is_locked as boolean,
-      lastPostAt: r.last_post_at as string,
-      lastPostAuthor: r.last_post_author as string | null,
-      createdAt: r.created_at as string,
-    }));
+    try {
+      const { data } = await supabase
+        .from('forum_threads')
+        .select('*')
+        .order('last_post_at', { ascending: false })
+        .limit(limit);
+      
+      return (data || []).map((r) => ({
+        id: r.id as string,
+        categoryId: r.category_id as number,
+        categorySlug: r.category_slug as string,
+        title: r.title as string,
+        content: r.content as string,
+        authorId: r.author_id as string | null,
+        authorName: r.author_name as string,
+        authorColor: (r.author_color as string) ?? '#00f5ff',
+        views: (r.views as number) ?? 0,
+        postCount: (r.post_count as number) ?? 1,
+        isPinned: r.is_pinned as boolean,
+        isLocked: r.is_locked as boolean,
+        lastPostAt: r.last_post_at as string,
+        lastPostAuthor: r.last_post_author as string | null,
+        createdAt: r.created_at as string,
+      }));
+    } catch (error) {
+      console.error('Ошибка загрузки последних тем:', error);
+      return [];
+    }
   }, []);
 
   // Fetch single thread with posts
-  const fetchThread = useCallback(async (threadId: string): Promise<{
-    thread: ForumThread | null;
-    posts: ForumPost[];
-  }> => {
+const fetchThread = useCallback(async (threadId: string): Promise<{
+  thread: ForumThread | null;
+  posts: ForumPost[];
+}> => {
+  try {
     const [{ data: threadData }, { data: postsData }] = await Promise.all([
       supabase.from('forum_threads').select('*').eq('id', threadId).maybeSingle(),
       supabase.from('forum_posts').select('*').eq('thread_id', threadId).eq('is_deleted', false).order('created_at'),
@@ -350,8 +417,11 @@ export const useForum = () => {
 
     if (!threadData) return { thread: null, posts: [] };
 
-    // Increment views
-    supabase.from('forum_threads').update({ views: ((threadData.views as number) ?? 0) + 1 }).eq('id', threadId).then(() => {});
+    // Увеличиваем счётчик просмотров (асинхронно, не ждём)
+    void supabase
+      .from('forum_threads')
+      .update({ views: ((threadData.views as number) ?? 0) + 1 })
+      .eq('id', threadId);
 
     const thread: ForumThread = {
       id: threadData.id as string,
@@ -371,7 +441,7 @@ export const useForum = () => {
       createdAt: threadData.created_at as string,
     };
 
-    // Get likes by current user
+    // Получаем лайки текущего пользователя
     let likedPostIds: string[] = [];
     if (forumUser) {
       const { data: likesData } = await supabase
@@ -396,9 +466,13 @@ export const useForum = () => {
     }));
 
     return { thread, posts };
-  }, [forumUser]);
+  } catch (error) {
+    console.error('Ошибка загрузки темы:', error);
+    return { thread: null, posts: [] };
+  }
+}, [forumUser]);
 
-  // Create new thread
+  // Создание новой темы
   const createThread = useCallback(async (
     categoryId: number,
     categorySlug: string,
@@ -406,95 +480,189 @@ export const useForum = () => {
     content: string,
   ): Promise<{ success: boolean; message: string; threadId?: string }> => {
     if (!forumUser || !forumUser.isApproved) {
-      return { success: false, message: 'Нет доступа' };
+      return { success: false, message: 'Нет доступа. Дождитесь одобрения администратора.' };
     }
-    const { data, error } = await supabase.from('forum_threads').insert({
-      category_id: categoryId,
-      category_slug: categorySlug,
-      title: title.trim(),
-      content: content.trim(),
-      author_id: forumUser.id,
-      author_name: forumUser.username,
-      author_color: forumUser.avatarColor,
-      last_post_author: forumUser.username,
-    }).select('id').maybeSingle();
 
-    if (error || !data) return { success: false, message: 'Ошибка создания темы' };
+    try {
+      const { data, error } = await supabase
+        .from('forum_threads')
+        .insert({
+          category_id: categoryId,
+          category_slug: categorySlug,
+          title: title.trim(),
+          content: content.trim(),
+          author_id: forumUser.id,
+          author_name: forumUser.username,
+          author_color: forumUser.avatarColor,
+          last_post_author: forumUser.username,
+        })
+        .select('id')
+        .maybeSingle();
 
-    // Update user stats
-    await supabase.from('forum_users').update({ threads_count: forumUser.threadsCount + 1 }).eq('id', forumUser.id);
-    await refreshForumUser(forumUser.id);
+      if (error || !data) {
+        console.error('Ошибка создания темы:', error);
+        return { success: false, message: 'Ошибка создания темы' };
+      }
 
-    // Update category counter
-    await supabase.rpc('increment_category_thread', { cat_slug: categorySlug }).catch(() => {});
+      // Обновляем статистику пользователя
+      await supabase
+        .from('forum_users')
+        .update({ threads_count: forumUser.threadsCount + 1 })
+        .eq('id', forumUser.id);
+      
+      await refreshForumUser(forumUser.id);
 
-    return { success: true, message: 'Тема создана!', threadId: data.id as string };
+      // Обновляем счётчик категории
+      try {
+        await supabase.rpc('increment_category_thread', { cat_slug: categorySlug });
+      } catch (rpcError) {
+        console.warn('RPC error (non-critical):', rpcError);
+      }
+
+      return { success: true, message: 'Тема создана!', threadId: data.id as string };
+    } catch (error) {
+      console.error('Ошибка при создании темы:', error);
+      return { success: false, message: 'Ошибка соединения. Попробуйте позже.' };
+    }
   }, [forumUser, refreshForumUser]);
 
-  // Reply to thread
+  // Ответ на тему
   const replyThread = useCallback(async (
     threadId: string,
     content: string,
   ): Promise<{ success: boolean; message: string }> => {
     if (!forumUser || !forumUser.isApproved) {
-      return { success: false, message: 'Нет доступа' };
+      return { success: false, message: 'Нет доступа. Дождитесь одобрения администратора.' };
     }
-    const { error } = await supabase.from('forum_posts').insert({
-      thread_id: threadId,
-      author_id: forumUser.id,
-      author_name: forumUser.username,
-      author_color: forumUser.avatarColor,
-      content: content.trim(),
-    });
 
-    if (error) return { success: false, message: 'Ошибка публикации' };
+    try {
+      const { error } = await supabase
+        .from('forum_posts')
+        .insert({
+          thread_id: threadId,
+          author_id: forumUser.id,
+          author_name: forumUser.username,
+          author_color: forumUser.avatarColor,
+          content: content.trim(),
+        });
 
-    // Update thread
-    const { data: threadData } = await supabase.from('forum_threads').select('post_count').eq('id', threadId).maybeSingle();
-    const currentCount = (threadData?.post_count as number) ?? 1;
-    await supabase.from('forum_threads').update({
-      post_count: currentCount + 1,
-      last_post_at: new Date().toISOString(),
-      last_post_author: forumUser.username,
-    }).eq('id', threadId);
+      if (error) {
+        console.error('Ошибка публикации:', error);
+        return { success: false, message: 'Ошибка публикации' };
+      }
 
-    // Update user stats
-    await supabase.from('forum_users').update({ posts_count: forumUser.postsCount + 1 }).eq('id', forumUser.id);
-    await refreshForumUser(forumUser.id);
+      // Получаем текущее количество постов
+      const { data: threadData } = await supabase
+        .from('forum_threads')
+        .select('post_count, category_slug')
+        .eq('id', threadId)
+        .maybeSingle();
+      
+      const currentCount = (threadData?.post_count as number) ?? 1;
+      
+      // Обновляем тему
+      await supabase
+        .from('forum_threads')
+        .update({
+          post_count: currentCount + 1,
+          last_post_at: new Date().toISOString(),
+          last_post_author: forumUser.username,
+        })
+        .eq('id', threadId);
 
-    return { success: true, message: 'Ответ добавлен!' };
+      // Обновляем статистику пользователя
+      await supabase
+        .from('forum_users')
+        .update({ posts_count: forumUser.postsCount + 1 })
+        .eq('id', forumUser.id);
+      
+      await refreshForumUser(forumUser.id);
+
+      // Обновляем счётчик категории
+      if (threadData?.category_slug) {
+        try {
+          await supabase.rpc('increment_category_post', { cat_slug: threadData.category_slug });
+        } catch (rpcError) {
+          console.warn('RPC error (non-critical):', rpcError);
+        }
+      }
+
+      return { success: true, message: 'Ответ добавлен!' };
+    } catch (error) {
+      console.error('Ошибка при ответе:', error);
+      return { success: false, message: 'Ошибка соединения. Попробуйте позже.' };
+    }
   }, [forumUser, refreshForumUser]);
 
-  // Toggle like on post
+  // Лайк/дизлайк поста
   const toggleLike = useCallback(async (postId: string, currentLikes: number, likedByMe: boolean): Promise<boolean> => {
     if (!forumUser || !forumUser.isApproved) return false;
-    if (likedByMe) {
-      await supabase.from('forum_post_likes').delete().eq('post_id', postId).eq('user_id', forumUser.id);
-      await supabase.from('forum_posts').update({ likes: Math.max(0, currentLikes - 1) }).eq('id', postId);
-    } else {
-      await supabase.from('forum_post_likes').insert({ post_id: postId, user_id: forumUser.id });
-      await supabase.from('forum_posts').update({ likes: currentLikes + 1 }).eq('id', postId);
 
-      // Update author likes
-      const { data: postData } = await supabase.from('forum_posts').select('author_id').eq('id', postId).maybeSingle();
-      if (postData?.author_id) {
-        const { data: authorData } = await supabase.from('forum_users').select('likes_received').eq('id', postData.author_id as string).maybeSingle();
-        const currentLikesReceived = (authorData?.likes_received as number) ?? 0;
-        await supabase.from('forum_users').update({ likes_received: currentLikesReceived + 1 }).eq('id', postData.author_id as string);
+    try {
+      if (likedByMe) {
+        await supabase
+          .from('forum_post_likes')
+          .delete()
+          .eq('post_id', postId)
+          .eq('user_id', forumUser.id);
+        
+        await supabase
+          .from('forum_posts')
+          .update({ likes: Math.max(0, currentLikes - 1) })
+          .eq('id', postId);
+      } else {
+        await supabase
+          .from('forum_post_likes')
+          .insert({ post_id: postId, user_id: forumUser.id });
+        
+        await supabase
+          .from('forum_posts')
+          .update({ likes: currentLikes + 1 })
+          .eq('id', postId);
+
+        // Обновляем количество лайков автора
+        const { data: postData } = await supabase
+          .from('forum_posts')
+          .select('author_id')
+          .eq('id', postId)
+          .maybeSingle();
+        
+        if (postData?.author_id) {
+          const { data: authorData } = await supabase
+            .from('forum_users')
+            .select('likes_received')
+            .eq('id', postData.author_id as string)
+            .maybeSingle();
+          
+          const currentLikesReceived = (authorData?.likes_received as number) ?? 0;
+          await supabase
+            .from('forum_users')
+            .update({ likes_received: currentLikesReceived + 1 })
+            .eq('id', postData.author_id as string);
+        }
       }
+      return true;
+    } catch (error) {
+      console.error('Ошибка при лайке:', error);
+      return false;
     }
-    return true;
   }, [forumUser]);
 
-  // Get top users
+  // Получение топ-пользователей
   const fetchTopUsers = useCallback(async (limit = 10): Promise<ForumUser[]> => {
-    const { data } = await supabase
-      .from('forum_users')
-      .select('*')
-      .eq('is_approved', true)
-      .order('posts_count', { ascending: false })
-      .limit(limit);
-    return (data || []).map((r) => mapForumUser(r as Record<string, unknown>));
+    try {
+      const { data } = await supabase
+        .from('forum_users')
+        .select('*')
+        .eq('is_approved', true)
+        .order('posts_count', { ascending: false })
+        .limit(limit);
+      
+      return (data || []).map((r) => mapForumUser(r as Record<string, unknown>));
+    } catch (error) {
+      console.error('Ошибка загрузки топ-пользователей:', error);
+      return [];
+    }
   }, []);
 
   return {

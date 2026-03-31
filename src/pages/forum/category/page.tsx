@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useForum, ForumThread, ForumCategory } from '../hooks/useForum';
 import ForumAuth from '../components/ForumAuth';
@@ -17,13 +17,13 @@ const timeAgo = (d: string) => {
 const categoryMeta: Record<string, { title: string; description: string; keywords: string }> = {
   quest2: {
     title: 'Oculus Quest 2 в России — активация, SideQuest, игры | Форум PARADOX VR',
-    description: 'Обсуждение Oculus Quest 2: активация шлема в России, установка игр через SideQuest без магазина Meta, настройка VPN, лучшие VR-игры 2024. Советы опытных пользователей.',
+    description: 'Обсуждение Oculus Quest 2: активация шлема в России, установка игр через SideQuest без магазина Meta, настройка VPN, лучшие VR-игры 2026. Советы опытных пользователей.',
     keywords: 'Oculus Quest 2 активация Россия, SideQuest установка игр, Quest 2 VPN настройка, Meta аккаунт Россия, VR игры Quest 2',
   },
   ps5: {
     title: 'PlayStation 5 в России — PSN, покупка игр, обход | Форум PARADOX VR',
-    description: 'Как пользоваться PS5 в России: смена региона PSN, покупка игр через турецкий и казахстанский аккаунт, VPN для PlayStation Network, актуальные рабочие методы 2024.',
-    keywords: 'PS5 Россия 2024, PlayStation Network Россия, PSN турецкий аккаунт, купить игры PS5 Россия, обход блокировок PlayStation',
+    description: 'Как пользоваться PS5 в России: смена региона PSN, покупка игр через турецкий и казахстанский аккаунт, VPN для PlayStation Network, актуальные рабочие методы 2026.',
+    keywords: 'PS5 Россия 2026, PlayStation Network Россия, PSN турецкий аккаунт, купить игры PS5 Россия, обход блокировок PlayStation',
   },
   racing: {
     title: 'Гоночные симуляторы MOZA Racing — настройка, игры, трассы | Форум PARADOX VR',
@@ -33,12 +33,12 @@ const categoryMeta: Record<string, { title: string; description: string; keyword
   bypass: {
     title: 'Обход блокировок Steam, PS5, Xbox в России — рабочие методы | Форум PARADOX VR',
     description: 'Актуальные рабочие методы обхода блокировок для геймеров в России: Steam VPN, смена региона PSN, Xbox Game Pass, Epic Games, скачивание игр. Обновляется постоянно.',
-    keywords: 'обход блокировок Steam Россия 2024, VPN для Steam, Xbox Game Pass Россия, Epic Games Россия, скачать игры обход блокировки',
+    keywords: 'обход блокировок Steam Россия 2026, VPN для Steam, Xbox Game Pass Россия, Epic Games Россия, скачать игры обход блокировки',
   },
   games: {
     title: 'Игры и рекомендации — VR, PS5, PC | Форум PARADOX VR Новосибирск',
-    description: 'Рекомендации игр, обзоры, обсуждение новинок и секретов. VR-игры для Quest 2, топ игр PS5 2024, лучшие гонки для симулятора. Делимся впечатлениями от игр клуба PARADOX.',
-    keywords: 'лучшие VR игры 2024, топ игры PS5, Quest 2 рекомендации, Beat Saber, Superhot VR, новые игры VR',
+    description: 'Рекомендации игр, обзоры, обсуждение новинок и секретов. VR-игры для Quest 2, топ игр PS5 2026, лучшие гонки для симулятора. Делимся впечатлениями от игр клуба PARADOX.',
+    keywords: 'лучшие VR игры 2026, топ игры PS5, Quest 2 рекомендации, Beat Saber, Superhot VR, новые игры VR',
   },
   club: {
     title: 'О клубе PARADOX VR Новосибирск — отзывы, вопросы, клубная карта | Форум',
@@ -50,7 +50,15 @@ const categoryMeta: Record<string, { title: string; description: string; keyword
 const CategoryPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const { forumUser, fetchCategories, fetchThreads, createThread } = useForum();
+  const { 
+    forumUser, 
+    fetchCategories, 
+    fetchThreads, 
+    createThread,
+    loginWithCard,
+    loginEmail,
+    registerEmail
+  } = useForum();
   const [category, setCategory] = useState<ForumCategory | null>(null);
   const [threads, setThreads] = useState<ForumThread[]>([]);
   const [loading, setLoading] = useState(true);
@@ -60,26 +68,62 @@ const CategoryPage = () => {
   const [newContent, setNewContent] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  
+  // Кэш для категорий
+  const categoriesCache = useRef<ForumCategory[]>([]);
+  const loadingRef = useRef(false);
+
+  // Функция загрузки данных
+  const loadData = useCallback(async () => {
+    if (!slug) return;
+    if (loadingRef.current) return;
+    loadingRef.current = true;
+    setLoading(true);
+    
+    try {
+      let cats = categoriesCache.current;
+      if (cats.length === 0) {
+        cats = await fetchCategories();
+        categoriesCache.current = cats;
+      }
+      
+      const threadsData = await fetchThreads(slug);
+      setCategory(cats.find(c => c.slug === slug) || null);
+      setThreads(threadsData);
+    } catch (err) {
+      console.error('Ошибка загрузки:', err);
+    } finally {
+      setLoading(false);
+      loadingRef.current = false;
+    }
+  }, [slug, fetchCategories, fetchThreads]);
 
   useEffect(() => {
-    if (!slug) return;
-    Promise.all([fetchCategories(), fetchThreads(slug)]).then(([cats, threads]) => {
-      setCategory(cats.find(c => c.slug === slug) || null);
-      setThreads(threads);
-      setLoading(false);
-    });
-  }, [slug, fetchCategories, fetchThreads]);
+    loadData();
+  }, [loadData]);
 
   const handleCreateThread = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!category || !newTitle.trim() || !newContent.trim()) return;
     setSubmitting(true);
-    const result = await createThread(category.id, category.slug, newTitle, newContent);
-    setSubmitting(false);
-    if (result.success && result.threadId) {
-      navigate(`/forum/thread/${result.threadId}`);
-    } else {
-      setMsg({ ok: false, text: result.message });
+    setMsg(null);
+    
+    try {
+      const result = await createThread(category.id, category.slug, newTitle, newContent);
+      if (result.success && result.threadId) {
+        // Перезагружаем список тем
+        await loadData();
+        navigate(`/forum/thread/${result.threadId}`);
+      } else {
+        setMsg({ ok: false, text: result.message || 'Ошибка создания темы. Попробуйте позже.' });
+      }
+    } catch (err) {
+      setMsg({ ok: false, text: 'Ошибка соединения. Проверьте интернет и попробуйте снова.' });
+    } finally {
+      setSubmitting(false);
+      setShowNewThread(false);
+      setNewTitle('');
+      setNewContent('');
     }
   };
 
@@ -146,16 +190,29 @@ const CategoryPage = () => {
           <div className="mb-6 rounded-xl p-5" style={{ background: 'rgba(0,245,255,0.04)', border: '1px solid rgba(0,245,255,0.2)' }}>
             <h3 className="font-orbitron font-bold text-white text-sm mb-4">НОВАЯ ТЕМА</h3>
             <form onSubmit={handleCreateThread} className="space-y-3">
-              <input value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="Заголовок темы..." required
+              <input 
+                value={newTitle} 
+                onChange={e => setNewTitle(e.target.value)} 
+                placeholder="Заголовок темы..." 
+                required
+                maxLength={100}
                 className="w-full rounded-lg px-4 py-3 font-rajdhani text-sm text-white outline-none"
-                style={{ background: 'rgba(0,245,255,0.04)', border: '1px solid rgba(0,245,255,0.2)', color: 'rgba(255,255,255,0.9)' }} />
-              <textarea value={newContent} onChange={e => setNewContent(e.target.value)} placeholder="Текст вашей темы..." required rows={5}
+                style={{ background: 'rgba(0,245,255,0.04)', border: '1px solid rgba(0,245,255,0.2)', color: 'rgba(255,255,255,0.9)' }} 
+              />
+              <textarea 
+                value={newContent} 
+                onChange={e => setNewContent(e.target.value)} 
+                placeholder="Текст вашей темы..." 
+                required 
+                rows={5}
                 className="w-full rounded-lg px-4 py-3 font-rajdhani text-sm text-white outline-none resize-none"
-                style={{ background: 'rgba(0,245,255,0.04)', border: '1px solid rgba(0,245,255,0.2)', color: 'rgba(255,255,255,0.9)' }} />
+                style={{ background: 'rgba(0,245,255,0.04)', border: '1px solid rgba(0,245,255,0.2)', color: 'rgba(255,255,255,0.9)' }} 
+              />
               {msg && <p className="font-rajdhani text-sm" style={{ color: msg.ok ? '#4ade80' : '#ff006e' }}>{msg.text}</p>}
               <div className="flex gap-2">
-                <button type="button" onClick={() => setShowNewThread(false)}
-                  className="px-4 py-2.5 rounded-sm text-xs font-rajdhani cursor-pointer" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.5)' }}>
+                <button type="button" onClick={() => { setShowNewThread(false); setMsg(null); setNewTitle(''); setNewContent(''); }}
+                  className="px-4 py-2.5 rounded-sm text-xs font-rajdhani cursor-pointer" 
+                  style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.5)' }}>
                   Отмена
                 </button>
                 <button type="submit" disabled={submitting}
@@ -169,9 +226,22 @@ const CategoryPage = () => {
         )}
 
         {loading ? (
-          <div className="flex justify-center py-16"><div className="w-8 h-8 rounded-full border-2 animate-spin" style={{ borderColor: 'rgba(0,245,255,0.2)', borderTopColor: '#00f5ff' }} /></div>
+          <div className="flex justify-center py-16">
+            <div className="w-8 h-8 rounded-full border-2 animate-spin" style={{ borderColor: 'rgba(0,245,255,0.2)', borderTopColor: '#00f5ff' }} />
+          </div>
         ) : threads.length === 0 ? (
-          <div className="text-center py-16"><i className="ri-article-line text-3xl mb-3 block" style={{ color: 'rgba(0,245,255,0.3)' }} /><p className="font-rajdhani text-white/30">Пока нет тем. Будь первым!</p></div>
+          <div className="text-center py-16">
+            <i className="ri-article-line text-3xl mb-3 block" style={{ color: 'rgba(0,245,255,0.3)' }} />
+            <p className="font-rajdhani text-white/30">Пока нет тем. Будь первым!</p>
+            {forumUser && (
+              <button 
+                onClick={() => setShowNewThread(true)}
+                className="mt-4 px-5 py-2 rounded-sm text-xs font-orbitron cursor-pointer"
+                style={{ background: 'rgba(0,245,255,0.1)', border: '1px solid rgba(0,245,255,0.4)', color: '#00f5ff' }}>
+                + Создать первую тему
+              </button>
+            )}
+          </div>
         ) : (
           <div className="space-y-2">
             {threads.map(t => (
@@ -213,7 +283,18 @@ const CategoryPage = () => {
         )}
       </div>
 
-      {showAuth && <ForumAuth onClose={() => setShowAuth(false)} onSuccess={() => { setShowAuth(false); window.location.reload(); }} />}
+      {showAuth && (
+        <ForumAuth 
+          onClose={() => setShowAuth(false)} 
+          onSuccess={() => { 
+            setShowAuth(false); 
+            window.location.reload(); 
+          }}
+          loginWithCard={loginWithCard}
+          loginEmail={loginEmail}
+          registerEmail={registerEmail}
+        />
+      )}
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { useForum, ForumThread, ForumPost } from '../hooks/useForum';
+import { useForum, ForumThread, ForumPost, ForumUser } from '../hooks/useForum';
 import ForumAuth from '../components/ForumAuth';
 import PageMeta from '../../../components/feature/PageMeta';
 
@@ -24,7 +24,15 @@ const getRank = (posts: number) => {
 
 const ThreadPage = () => {
   const { id } = useParams<{ id: string }>();
-  const { forumUser, fetchThread, replyThread, toggleLike } = useForum();
+  const { 
+    forumUser, 
+    fetchThread, 
+    replyThread, 
+    toggleLike,
+    loginWithCard,
+    loginEmail,
+    registerEmail
+  } = useForum();
   const [thread, setThread] = useState<ForumThread | null>(null);
   const [posts, setPosts] = useState<ForumPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,10 +40,12 @@ const ThreadPage = () => {
   const [replyText, setReplyText] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [pendingApproval, setPendingApproval] = useState(false);
   const replyRef = useRef<HTMLTextAreaElement>(null);
 
   const load = async () => {
     if (!id) return;
+    setLoading(true);
     const result = await fetchThread(id);
     setThread(result.thread);
     setPosts(result.posts);
@@ -48,9 +58,17 @@ const ThreadPage = () => {
     e.preventDefault();
     if (!replyText.trim()) return;
     if (!forumUser) { setShowAuth(true); return; }
+    if (!forumUser.isApproved) {
+      setMsg({ ok: false, text: 'Ваш аккаунт ожидает одобрения администратора. Пожалуйста, подождите.' });
+      setTimeout(() => setMsg(null), 3000);
+      return;
+    }
+    
     setSubmitting(true);
+    setMsg(null);
     const result = await replyThread(id!, replyText);
     setSubmitting(false);
+    
     if (result.success) {
       setReplyText('');
       setMsg({ ok: true, text: 'Ответ опубликован!' });
@@ -58,13 +76,30 @@ const ThreadPage = () => {
       setTimeout(() => setMsg(null), 2000);
     } else {
       setMsg({ ok: false, text: result.message });
+      setTimeout(() => setMsg(null), 3000);
     }
   };
 
   const handleLike = async (postId: string, likes: number, likedByMe: boolean) => {
     if (!forumUser) { setShowAuth(true); return; }
+    if (!forumUser.isApproved) {
+      setMsg({ ok: false, text: 'Ваш аккаунт ожидает одобрения администратора' });
+      setTimeout(() => setMsg(null), 2000);
+      return;
+    }
     await toggleLike(postId, likes, likedByMe);
     await load();
+  };
+
+  const handleAuthSuccess = (user: ForumUser) => {
+    setShowAuth(false);
+    if (user.isApproved) {
+      setPendingApproval(false);
+    } else {
+      setPendingApproval(true);
+      setMsg({ ok: true, text: 'Заявка отправлена! Ожидайте одобрения администратора.' });
+      setTimeout(() => setMsg(null), 4000);
+    }
   };
 
   if (loading) return (
@@ -95,7 +130,13 @@ const ThreadPage = () => {
         {thread && (
           <>
             <span className="text-white/20">/</span>
-            <Link to={`/forum/category/${thread.categorySlug}`} className="font-orbitron text-xs text-white/50 hover:text-white/80 cursor-pointer truncate">{thread.categorySlug}</Link>
+            <Link to={`/forum/category/${thread.categorySlug}`} className="font-orbitron text-xs text-white/50 hover:text-white/80 cursor-pointer truncate">
+              {thread.categorySlug === 'quest2' ? 'Quest 2' : 
+               thread.categorySlug === 'ps5' ? 'PS5' :
+               thread.categorySlug === 'racing' ? 'Racing' :
+               thread.categorySlug === 'bypass' ? 'Обход блокировок' :
+               thread.categorySlug === 'games' ? 'Игры' : 'Клуб'}
+            </Link>
           </>
         )}
       </nav>
@@ -161,13 +202,13 @@ const ThreadPage = () => {
                   <div className="flex items-center gap-3 mt-3">
                     <button
                       onClick={() => handleLike(post.id, post.likes, !!post.likedByMe)}
-                      className="flex items-center gap-1.5 cursor-pointer transition-all"
+                      className="flex items-center gap-1.5 cursor-pointer transition-all hover:scale-110"
                       style={{ color: post.likedByMe ? '#ff006e' : 'rgba(255,255,255,0.3)' }}>
                       <i className={post.likedByMe ? 'ri-heart-fill' : 'ri-heart-line'} style={{ fontSize: '14px' }} />
                       <span className="font-mono-tech" style={{ fontSize: '11px' }}>{post.likes}</span>
                     </button>
                     {!forumUser && (
-                      <button onClick={() => setShowAuth(true)} className="font-mono-tech cursor-pointer" style={{ fontSize: '10px', color: 'rgba(0,245,255,0.5)' }}>
+                      <button onClick={() => setShowAuth(true)} className="font-mono-tech cursor-pointer hover:underline" style={{ fontSize: '10px', color: 'rgba(0,245,255,0.5)' }}>
                         Войти чтобы ответить
                       </button>
                     )}
@@ -189,30 +230,41 @@ const ThreadPage = () => {
                 <textarea
                   ref={replyRef}
                   value={replyText}
-                  onChange={e => setReplyText(e.target.value)}
-                  placeholder="Напишите ваш ответ..."
+                  onChange={e => setReplyText(e.target.value.slice(0, 5000))}
+                  placeholder="Напишите ваш ответ... (максимум 5000 символов)"
                   rows={4}
                   required
-                  className="w-full rounded-lg px-4 py-3 font-rajdhani text-sm outline-none resize-none"
+                  maxLength={5000}
+                  className="w-full rounded-lg px-4 py-3 font-rajdhani text-sm outline-none resize-none focus:ring-1 focus:ring-cyan-500/50"
                   style={{ background: 'rgba(0,245,255,0.04)', border: '1px solid rgba(0,245,255,0.2)', color: 'rgba(255,255,255,0.9)' }}
                 />
+                {replyText.length > 0 && (
+                  <div className="text-right font-mono-tech text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                    {replyText.length}/5000
+                  </div>
+                )}
                 {msg && <p className="font-rajdhani text-sm" style={{ color: msg.ok ? '#4ade80' : '#ff006e' }}>{msg.text}</p>}
-                <button type="submit" disabled={submitting || !replyText.trim()}
-                  className="px-6 py-2.5 rounded-sm font-orbitron font-bold text-xs cursor-pointer disabled:opacity-50 whitespace-nowrap"
+                <button 
+                  type="submit" 
+                  disabled={submitting || !replyText.trim()}
+                  className="px-6 py-2.5 rounded-sm font-orbitron font-bold text-xs cursor-pointer disabled:opacity-50 whitespace-nowrap transition-all hover:scale-105"
                   style={{ background: 'rgba(0,245,255,0.12)', border: '1px solid rgba(0,245,255,0.4)', color: '#00f5ff' }}>
-                  {submitting ? 'Публикация...' : 'Опубликовать ответ'}
+                  {submitting ? <><i className="ri-loader-4-line animate-spin mr-1" />Публикация...</> : 'Опубликовать ответ'}
                 </button>
               </form>
             ) : (
               <div className="text-center py-4">
                 <p className="font-rajdhani text-white/50 text-sm mb-3">
-                  {forumUser ? 'Ваш аккаунт ожидает одобрения администратора' : 'Войдите чтобы оставить ответ'}
+                  {forumUser ? (
+                    pendingApproval || !forumUser.isApproved ? 'Ваш аккаунт ожидает одобрения администратора' : 'Войдите чтобы оставить ответ'
+                  ) : 'Войдите чтобы оставить ответ'}
                 </p>
                 {!forumUser && (
-                  <button onClick={() => setShowAuth(true)}
-                    className="px-5 py-2.5 rounded-sm font-orbitron font-bold text-xs cursor-pointer whitespace-nowrap"
+                  <button 
+                    onClick={() => setShowAuth(true)}
+                    className="px-5 py-2.5 rounded-sm font-orbitron font-bold text-xs cursor-pointer whitespace-nowrap transition-all hover:scale-105"
                     style={{ background: 'rgba(0,245,255,0.1)', border: '1px solid rgba(0,245,255,0.4)', color: '#00f5ff' }}>
-                    Войти / Зарегистрироваться
+                    <i className="ri-login-box-line mr-1" />Войти / Зарегистрироваться
                   </button>
                 )}
               </div>
@@ -220,7 +272,16 @@ const ThreadPage = () => {
           </div>
         )}
       </div>
-      {showAuth && <ForumAuth onClose={() => setShowAuth(false)} onSuccess={() => { setShowAuth(false); load(); }} />}
+      
+      {showAuth && (
+        <ForumAuth 
+          onClose={() => setShowAuth(false)} 
+          onSuccess={handleAuthSuccess}
+          loginWithCard={loginWithCard}
+          loginEmail={loginEmail}
+          registerEmail={registerEmail}
+        />
+      )}
     </div>
   );
 };

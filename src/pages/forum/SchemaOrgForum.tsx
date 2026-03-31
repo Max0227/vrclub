@@ -9,6 +9,7 @@ const forumSchema = {
   description:
     'Форум VR-клуба PARADOX в Новосибирске. Обсуждения Oculus Quest 2, активация Quest 2, SideQuest, VPN для PS5, настройка MOZA Racing, обход блокировок PlayStation и Steam в России. Сообщество опытных геймеров.',
   url: `${siteUrl}/forum`,
+  datePublished: '2026-03-31',
   inLanguage: 'ru',
   isPartOf: {
     '@type': 'WebSite',
@@ -24,12 +25,18 @@ const webPageSchema = {
   description:
     'Форум VR-клуба PARADOX. Активация Quest 2 в России, SideQuest установка, VPN для PS5, настройка MOZA Racing симулятора, обход блокировок PlayStation Network и Steam. Сообщество геймеров Новосибирска.',
   url: `${siteUrl}/forum`,
+  dateModified: new Date().toISOString().split('T')[0],
   breadcrumb: {
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Главная', item: siteUrl },
       { '@type': 'ListItem', position: 2, name: 'Форум', item: `${siteUrl}/forum` },
     ],
+  },
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: `${siteUrl}/forum?search={search_term_string}`,
+    'query-input': 'required name=search_term_string',
   },
   isPartOf: {
     '@type': 'WebSite',
@@ -82,6 +89,22 @@ const forumFaqSchema = {
         text: 'Steam работает в России через VPN-сервисы. Для смены региона цен используют аккаунты с Казахстаном или Аргентиной. Family Sharing позволяет играть в игры из библиотеки другого аккаунта. Актуальные рабочие методы обсуждаются на форуме.',
       },
     },
+    {
+      '@type': 'Question',
+      name: 'Какие бесплатные VR-игры стоит попробовать на Oculus Quest 2 в 2026?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Лучшие бесплатные VR-игры: VRChat, Rec Room, Gun Raiders, Echo VR, Population: One (условно-бесплатная), Hyper Dash, Bigscreen VR. Все доступны в официальном магазине Meta Quest.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Как настроить BeamNG.drive для игры на MOZA Racing?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'BeamNG.drive поддерживает рули MOZA через эмуляцию контроллера. В настройках игры выберите профиль "Wheel" и назначьте оси. Для лучшего FFB используйте мод "CJD Special Tunes" и настройки из раздела форума Racing.',
+      },
+    },
   ],
 };
 
@@ -91,6 +114,7 @@ const organizationForumSchema = {
   name: 'Форум PARADOX VR CLUB',
   url: `${siteUrl}/forum`,
   sameAs: [`${siteUrl}`, 'https://t.me/VRClubParadox'],
+  foundingDate: '2026',
   parentOrganization: {
     '@type': 'EntertainmentBusiness',
     name: 'PARADOX VR CLUB',

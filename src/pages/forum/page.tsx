@@ -34,13 +34,18 @@ const ForumPage = () => {
   const [loading, setLoading] = useState(true);
 
   const loadData = useCallback(() => {
-    Promise.all([fetchCategories(), fetchRecentThreads(8), fetchTopUsers(7)]).then(([cats, rec, users]) => {
+  Promise.all([fetchCategories(), fetchRecentThreads(8), fetchTopUsers(7)])
+    .then(([cats, rec, users]) => {
       setCategories(cats);
       setRecent(rec);
       setTopUsers(users);
       setLoading(false);
+    })
+    .catch((err) => {
+      console.error('Ошибка загрузки данных форума:', err);
+      setLoading(false);
     });
-  }, [fetchCategories, fetchRecentThreads, fetchTopUsers]);
+}, [fetchCategories, fetchRecentThreads, fetchTopUsers]);
 
   useEffect(() => {
     loadData();
