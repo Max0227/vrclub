@@ -405,7 +405,7 @@ const Invitations = () => {
         >
           <div
             className="absolute inset-0 opacity-15"
-            style={{ backgroundImage: `url(https://readdy.ai/api/search-image?query=birthday%20party%20celebration%20cyberpunk%20neon%20lights%20dark%20room%20pink%20purple%20glow%20futuristic%20festive%20confetti%20streamers%20luxury%20vip%20event%20hall%20dark%20atmosphere&width=1200&height=400&seq=inv_banner01&orientation=landscape)`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+            style={{ backgroundImage: `url(/images/invitations/birthday-banner.jpg)`, backgroundSize: 'cover', backgroundPosition: 'center' }}
           />
           <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(1,0,20,0.7), rgba(10,0,40,0.5))' }} />
           <div className="relative p-8 md:p-12 flex flex-col md:flex-row items-center gap-8">

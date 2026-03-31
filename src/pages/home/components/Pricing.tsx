@@ -73,7 +73,7 @@ const Pricing = ({ onBooking }: PricingProps) => {
           >
             {/* Background image slightly blurred */}
             <img
-              src="https://readdy.ai/api/search-image?query=VR%20gaming%20club%20interior%20group%20of%20people%20playing%20virtual%20reality%20games%20together%20neon%20lights%20futuristic%20room%20wide%20shot%20dark%20atmosphere&width=900&height=220&seq=pricing_cta_bg01&orientation=landscape"
+              src="/images/pricing/cta-bg.jpg"
               alt=""
               className="absolute inset-0 w-full h-full object-cover object-center"
               style={{ filter: 'blur(3px) brightness(0.18)', transform: 'scale(1.04)' }}

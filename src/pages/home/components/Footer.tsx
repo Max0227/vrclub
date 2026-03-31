@@ -6,7 +6,7 @@ const Footer = ({ onBooking }: { onBooking: () => void }) => (
     <div className="max-w-6xl mx-auto">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-8">
         <div>
-          <img src="https://public.readdy.ai/ai/img_res/555b681d-a7af-4440-8e70-a9ecb63c7b48.png" alt="PARADOX VR CLUB" className="h-12 w-auto mb-3" />
+          <img src="/images/logo.png" alt="PARADOX VR CLUB" className="h-12 w-auto mb-3" />
           <p className="text-white/40 font-rajdhani text-sm leading-relaxed">VR-клуб нового поколения в Новосибирске. 4 года вдохновляем!</p>
         </div>
         <div>

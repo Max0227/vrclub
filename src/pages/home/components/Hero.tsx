@@ -55,7 +55,7 @@ const Hero = ({ onBooking }: HeroProps) => {
       {/* ── Background: people in VR glasses blurred bokeh ── */}
       <div className="absolute inset-0" style={{ zIndex: 0 }}>
         <img
-          src="https://readdy.ai/api/search-image?query=group%20of%20happy%20young%20people%20wearing%20VR%20headsets%20Oculus%20Quest%20in%20dark%20gaming%20room%20laughing%20excited%20arms%20raised%20immersive%20experience%20blurred%20bokeh%20depth%20of%20field%20cinematic%20shallow%20focus%20neon%20cyan%20pink%20lighting%20vibrant%20atmosphere%20friends%20having%20fun%20virtual%20reality%20club&width=1920&height=1080&seq=hero_vr_people_blur_v1&orientation=landscape"
+          src="/images/hero/hero-bg.jpg"
           alt=""
           className="w-full h-full object-cover object-center"
           aria-hidden="true"

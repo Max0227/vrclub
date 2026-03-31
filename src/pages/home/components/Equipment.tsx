@@ -5,7 +5,7 @@ const equipmentData = [
     title: 'Oculus Quest 2',
     subtitle: 'Беспроводные VR-шлемы',
     color: '#00f5ff',
-    image: 'https://readdy.ai/api/search-image?query=Meta%20Oculus%20Quest%202%20VR%20headset%20close-up%20product%20photo%20floating%20in%20dark%20void%20with%20electric%20cyan%20neon%20glow%20rays%20premium%20gadget%20photography%20minimalist%20dark%20background%20lens%20reflection&width=800&height=520&seq=eq01v2&orientation=landscape',
+    image: '/images/equipment/oculus-quest-2.jpg',
     features: [
       { icon: 'ri-wifi-line', text: 'Полностью беспроводные' },
       { icon: 'ri-hand-coin-line', text: 'Трекинг рук без контроллеров' },
@@ -21,7 +21,7 @@ const equipmentData = [
     title: 'PlayStation 5',
     subtitle: 'Консольный гейминг',
     color: '#9b4dff',
-    image: 'https://readdy.ai/api/search-image?query=Sony%20PlayStation%205%20PS5%20console%20white%20futuristic%20design%20on%20dark%20surface%20with%20purple%20violet%20neon%20light%20reflection%20gaming%20setup%20premium%20product%20photo%20studio%20shot&width=800&height=520&seq=eq02v2&orientation=landscape',
+    image: '/images/equipment/playstation-5.jpg',
     features: [
       { icon: 'ri-gamepad-2-line', text: '4 геймпада для мультиплеера' },
       { icon: 'ri-4k-line', text: '4K HDR графика' },
@@ -36,7 +36,7 @@ const equipmentData = [
     title: 'MOZA Racing',
     subtitle: 'Профессиональный автосимулятор',
     color: '#ff006e',
-    image: 'https://readdy.ai/api/search-image?query=MOZA%20professional%20racing%20simulator%20steering%20wheel%20and%20pedals%20cockpit%20setup%20dark%20gaming%20room%20pink%20red%20magenta%20neon%20light%20reflection%20force%20feedback%20wheel%20premium%20sim%20racing%20rig&width=800&height=520&seq=eq03v2&orientation=landscape',
+    image: '/images/equipment/moza-racing.jpg',
     features: [
       { icon: 'ri-steering-2-line', text: 'Профессиональный руль MOZA' },
       { icon: 'ri-footprint-line', text: 'Педали с обратной связью' },
