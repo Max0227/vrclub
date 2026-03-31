@@ -8,10 +8,10 @@ const MAX_ICON = 'https://storage.readdy-site.link/project_files/af3cd35d-3e8e-4
 const ADMIN_EMAIL = 'paradoxclub54@gmail.com';
 
 const CERT_IMAGES: Record<number, string> = {
-  1: 'https://readdy.ai/api/search-image?query=person%20wearing%20Oculus%20Quest%202%20VR%20headset%20cyberpunk%20neon%20glow%20cyan%20light%20immersive%20virtual%20reality%20gaming%20dark%20background%20futuristic%202026%20professional%20photo&width=600&height=360&seq=cert_vr30&orientation=landscape',
-  2: 'https://readdy.ai/api/search-image?query=full%20immersive%20virtual%20reality%20experience%20Oculus%20Quest%202%20player%20arms%20outstretched%20neon%20pink%20cyan%20lights%20cyberpunk%20dark%20room%20exciting%20gaming%20adventure&width=600&height=360&seq=cert_vr60&orientation=landscape',
-  3: 'https://readdy.ai/api/search-image?query=PlayStation%205%20white%20console%20controller%20neon%20purple%20glow%20dark%20cyberpunk%20background%20gaming%20setup%20ultrawide%204K%20display%20couch%20multiplayer%20gaming%20room&width=600&height=360&seq=cert_ps5&orientation=landscape',
-  4: 'https://readdy.ai/api/search-image?query=MOZA%20racing%20simulator%20cockpit%20steering%20wheel%20racing%20seat%20pedals%20neon%20lights%20cyberpunk%20dark%20room%20Forza%20Horizon%20race%20track%20high%20speed%20drift%20gaming&width=600&height=360&seq=cert_moza&orientation=landscape',
+  1: '/images/certificates/cert-vr-30min.jpg',
+  2: '/images/certificates/cert-vr-60min.jpg',
+  3: '/images/certificates/cert-ps5.jpg',
+  4: '/images/certificates/cert-moza.jpg',
 };
 
 const generateCertNumber = (): string => {

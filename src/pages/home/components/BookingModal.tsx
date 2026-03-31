@@ -34,6 +34,7 @@ const BookingModal = memo(({ isOpen, onClose, selectedService }: BookingModalPro
   const [isBirthday, setIsBirthday] = useState(false);
   const [items, setItems] = useState<BookingItem[]>([]);
   const [form, setForm] = useState<FormState>({ name: '', phone: '', guests: '1', comment: '' });
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   // Pre-select service if provided
   const [prevSelectedService, setPrevSelectedService] = useState(selectedService);
@@ -48,6 +49,7 @@ const BookingModal = memo(({ isOpen, onClose, selectedService }: BookingModalPro
       setItems([]);
       setIsBirthday(false);
       setForm({ name: '', phone: '', guests: '1', comment: '' });
+      setSubmitError(null);
       onClose();
     }
   }, [loading, onClose]);
@@ -63,16 +65,21 @@ const BookingModal = memo(({ isOpen, onClose, selectedService }: BookingModalPro
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
-  }, []);
+    if (submitError) setSubmitError(null);
+  }, [submitError]);
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setSubmitError(null);
+
+    let hasError = false;
+    let errorMessage = '';
 
     try {
       // Insert each booking item as separate row
       for (const item of items) {
-        await supabase.from('bookings').insert({
+        const { error } = await supabase.from('bookings').insert({
           name: form.name,
           phone: form.phone,
           email: null,
@@ -85,6 +92,20 @@ const BookingModal = memo(({ isOpen, onClose, selectedService }: BookingModalPro
           comment: form.comment || null,
           status: 'pending',
         });
+        
+        if (error) {
+          console.error('Ошибка вставки бронирования:', error);
+          hasError = true;
+          errorMessage = error.message || 'Ошибка при сохранении бронирования';
+          break;
+        }
+      }
+
+      // Если есть ошибка, не отправляем email и показываем сообщение
+      if (hasError) {
+        setSubmitError(errorMessage || 'Не удалось сохранить бронирование. Пожалуйста, попробуйте позже или свяжитесь с нами по телефону.');
+        setLoading(false);
+        return;
       }
 
       const supabaseUrl = import.meta.env.VITE_PUBLIC_SUPABASE_URL;
@@ -92,35 +113,46 @@ const BookingModal = memo(({ isOpen, onClose, selectedService }: BookingModalPro
       const totalNormal = getTotalPrice(items, false);
 
       const supabaseKey = import.meta.env.VITE_PUBLIC_SUPABASE_ANON_KEY as string;
-      await fetch(`${supabaseUrl}/functions/v1/send-booking-email`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${supabaseKey}`,
-        },
-        body: JSON.stringify({
-          name: form.name,
-          phone: form.phone,
-          items: items.map(item => ({
-            service: item.service,
-            date: item.date,
-            time: item.time,
-            vrCount: item.service.startsWith('VR') ? item.vrCount : null,
-            price: getItemPrice(item, isBirthday),
-          })),
-          guests: form.guests,
-          isBirthday,
-          total,
-          totalNormal,
-          comment: form.comment || '',
-          adminEmail: ADMIN_EMAIL,
-        }),
-      });
-    } catch {
-      // silent fail - booking saved to DB anyway
+      
+      // Отправляем email только если все бронирования успешно сохранены
+      try {
+        await fetch(`${supabaseUrl}/functions/v1/send-booking-email`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${supabaseKey}`,
+          },
+          body: JSON.stringify({
+            name: form.name,
+            phone: form.phone,
+            items: items.map(item => ({
+              service: item.service,
+              date: item.date,
+              time: item.time,
+              vrCount: item.service.startsWith('VR') ? item.vrCount : null,
+              price: getItemPrice(item, isBirthday),
+            })),
+            guests: form.guests,
+            isBirthday,
+            total,
+            totalNormal,
+            comment: form.comment || '',
+            adminEmail: ADMIN_EMAIL,
+          }),
+        });
+      } catch (emailError) {
+        // Email ошибка не критична — бронирование уже сохранено в БД
+        console.error('Ошибка отправки email:', emailError);
+      }
+      
+    } catch (err) {
+      console.error('Неожиданная ошибка:', err);
+      setSubmitError('Произошла непредвиденная ошибка. Пожалуйста, свяжитесь с нами по телефону для подтверждения бронирования.');
     } finally {
       setLoading(false);
-      setSent(true);
+      if (!hasError) {
+        setSent(true);
+      }
     }
   }, [form, items, isBirthday]);
 
@@ -207,6 +239,7 @@ const BookingModal = memo(({ isOpen, onClose, selectedService }: BookingModalPro
                   isBirthday={isBirthday}
                   total={total}
                   loading={loading}
+                  error={submitError}
                   onChange={handleChange}
                   onSubmit={handleSubmit}
                   onBack={() => setStep('services')}
@@ -228,12 +261,13 @@ interface InfoStepProps {
   isBirthday: boolean;
   total: number;
   loading: boolean;
+  error: string | null;
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
   onSubmit: (e: React.FormEvent) => void;
   onBack: () => void;
 }
 
-const InfoStep = memo(({ form, items, isBirthday, total, loading, onChange, onSubmit, onBack }: InfoStepProps) => (
+const InfoStep = memo(({ form, items, isBirthday, total, loading, error, onChange, onSubmit, onBack }: InfoStepProps) => (
   <form onSubmit={onSubmit} data-readdy-form className="space-y-4">
     {/* Booking summary */}
     <div className="p-3 rounded-sm space-y-2" style={{ background: 'rgba(0,245,255,0.05)', border: '1px solid rgba(0,245,255,0.15)' }}>
@@ -281,6 +315,15 @@ const InfoStep = memo(({ form, items, isBirthday, total, loading, onChange, onSu
         <p className="text-right font-mono-tech mt-0.5" style={{ fontSize: '9px', color: 'rgba(255,255,255,0.3)' }}>{form.comment.length}/500</p>
       )}
     </div>
+
+    {error && (
+      <div className="p-3 rounded-sm" style={{ background: 'rgba(255,0,110,0.08)', border: '1px solid rgba(255,0,110,0.3)' }}>
+        <div className="flex items-center gap-2">
+          <i className="ri-error-warning-line text-sm" style={{ color: '#ff006e' }} />
+          <span className="font-rajdhani text-xs" style={{ color: '#ff006e' }}>{error}</span>
+        </div>
+      </div>
+    )}
 
     <div className="flex gap-3">
       <button type="button" onClick={onBack}

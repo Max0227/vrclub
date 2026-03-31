@@ -9,7 +9,7 @@ const TIME_SLOTS = [
 ];
 
 const MAX_VR = 4;
-const BUFFER_MINUTES = 30;
+const BUFFER_MINUTES = 30; // время на уборку между сессиями
 
 // Fallback durations for bookings stored in DB
 export const SERVICE_DURATIONS: Record<string, number> = {
@@ -18,6 +18,7 @@ export const SERVICE_DURATIONS: Record<string, number> = {
   'VR 1 час': 60,
   'VR 2 часа': 120,
   'VR 3 часа': 180,
+  'VR 4 часа': 240,
   'MOZA 15 минут': 15,
   'MOZA 30 минут': 30,
   'PlayStation 5 — 1 час': 60,
@@ -89,6 +90,7 @@ function computeSlotState(
   }
 
   // VR: count remaining VR sets across overlapping bookings
+  // ✅ ИСПРАВЛЕНО: добавлен BUFFER_MINUTES для уборки между VR-сессиями
   if (isVR) {
     let bookedVR = 0;
     for (const b of bookings) {
@@ -96,7 +98,10 @@ function computeSlotState(
       if (!bIsVR) continue;
       const bStart = timeToMinutes(b.booking_time.slice(0, 5));
       const bDur = getStoredDuration(b.service, b.duration_minutes);
-      if (slotMin < bStart + bDur && slotMin + serviceDuration > bStart) {
+      // Добавляем BUFFER_MINUTES к окончанию сессии
+      const bEnd = bStart + bDur + BUFFER_MINUTES;
+      // Проверяем пересечение с учётом буфера
+      if (slotMin < bEnd && slotMin + serviceDuration > bStart) {
         bookedVR += b.vr_count ?? 1;
       }
     }
@@ -107,12 +112,14 @@ function computeSlotState(
     return { kind: 'free', vrAvailable: MAX_VR };
   }
 
-  // Other services (MOZA, PS5): direct time conflict
+  // Other services (MOZA, PS5): direct time conflict + 15 min cleanup
   for (const b of bookings) {
     if (b.service !== service) continue;
     const bStart = timeToMinutes(b.booking_time.slice(0, 5));
     const bDur = getStoredDuration(b.service, b.duration_minutes);
-    if (slotMin < bStart + bDur && slotMin + serviceDuration > bStart) return { kind: 'full' };
+    // Для MOZA и PS5 добавляем 15 минут на уборку
+    const bEnd = bStart + bDur + 15;
+    if (slotMin < bEnd && slotMin + serviceDuration > bStart) return { kind: 'full' };
   }
 
   return { kind: 'free' };
