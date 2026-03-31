@@ -21,7 +21,7 @@ export const pricingData: PriceItem[] = [
     icon: 'ri-vr-glasses-line',
     color: '#00f5ff',
     bonus: '5 часов = 1 час в подарок (будни)',
-    image: 'https://readdy.ai/api/search-image?query=young%20person%20wearing%20black%20VR%20headset%20Oculus%20Quest%202%20in%20dark%20gaming%20room%20with%20cyan%20neon%20lights%20glowing%20on%20face%20excited%20expression%20hands%20raised%20immersive%20virtual%20world&width=600&height=340&seq=vr30min_a1&orientation=landscape',
+    image: '/images/mocks/vr-30min.jpg',
   },
   {
     id: 2,
@@ -33,7 +33,7 @@ export const pricingData: PriceItem[] = [
     color: '#00f5ff',
     popular: true,
     bonus: '5 часов = 1 час в подарок (будни)',
-    image: 'https://readdy.ai/api/search-image?query=two%20people%20wearing%20VR%20headsets%20smiling%20happy%20dark%20neon%20gaming%20lounge%20cyan%20blue%20ambient%20glow%20modern%20interior%20friends%20enjoying%20virtual%20reality%20game%20together&width=600&height=340&seq=vr1hr_b2&orientation=landscape',
+    image: '/images/mocks/vr-1hour.jpg',
   },
   {
     id: 3,
@@ -44,7 +44,7 @@ export const pricingData: PriceItem[] = [
     icon: 'ri-vr-glasses-line',
     color: '#00f5ff',
     bonus: '5 часов = 1 час в подарок (будни)',
-    image: 'https://readdy.ai/api/search-image?query=group%20four%20people%20wearing%20VR%20headsets%20together%20in%20dark%20neon%20gaming%20club%20room%20playing%20together%20friends%20excited%20cyan%20blue%20light%20modern%20gaming%20lounge&width=600&height=340&seq=vr4hr_g7&orientation=landscape',
+    image: '/images/mocks/vr-4hours.jpg',
   },
   {
     id: 4,
@@ -54,7 +54,7 @@ export const pricingData: PriceItem[] = [
     birthdayPrice: 240,
     icon: 'ri-steering-2-line',
     color: '#ff006e',
-    image: 'https://readdy.ai/api/search-image?query=close%20up%20racing%20steering%20wheel%20and%20hands%20gripping%20tight%20dramatic%20racing%20simulator%20setup%20dark%20cockpit%20motion%20blur%20speed%20neon%20red%20pink%20glow%20professional%20sim%20rig&width=600&height=340&seq=moza15_c3&orientation=landscape',
+    image: '/images/mocks/moza-15min.jpg',
   },
   {
     id: 5,
@@ -64,7 +64,7 @@ export const pricingData: PriceItem[] = [
     birthdayPrice: 440,
     icon: 'ri-steering-2-line',
     color: '#ff006e',
-    image: 'https://readdy.ai/api/search-image?query=full%20racing%20simulator%20cockpit%20seat%20steering%20wheel%20pedals%20triple%20monitor%20setup%20race%20track%20on%20screen%20dark%20gaming%20room%20dramatic%20pink%20magenta%20lighting%20professional%20setup&width=600&height=340&seq=moza30_d4&orientation=landscape',
+    image: '/images/mocks/moza-30min.jpg',
   },
   {
     id: 6,
@@ -74,7 +74,7 @@ export const pricingData: PriceItem[] = [
     birthdayPrice: 280,
     icon: 'ri-gamepad-line',
     color: '#9b4dff',
-    image: 'https://readdy.ai/api/search-image?query=group%20friends%20playing%20video%20game%20console%20big%20TV%20screen%20dark%20lounge%20sofa%20couch%20purple%20violet%20neon%20ambient%20light%20laughing%20excited%20gaming%20together%20entertainment&width=600&height=340&seq=ps5_e5&orientation=landscape',
+    image: '/images/mocks/ps5.jpg',
   },
   {
     id: 7,
@@ -84,7 +84,7 @@ export const pricingData: PriceItem[] = [
     birthdayPrice: 3800,
     icon: 'ri-building-2-line',
     color: '#00f5ff',
-    image: 'https://readdy.ai/api/search-image?query=spacious%20modern%20gaming%20club%20interior%20wide%20angle%20view%20multiple%20stations%20VR%20headsets%20racing%20simulators%20screens%20dark%20room%20colorful%20neon%20lights%20premium%20entertainment%20venue%20full%20room&width=600&height=340&seq=fullclub_f6&orientation=landscape',
+    image: '/images/mocks/club-full.jpg',
   },
 ];
 
