@@ -151,21 +151,22 @@ const GamesTeaser = () => {
           />
 
           {/* Image */}
-          <div
-            className="w-full h-52 sm:h-64 md:h-72 relative overflow-hidden"
-            style={{ background: 'linear-gradient(135deg, #010014 0%, #0a0025 30%, #060018 60%, #010014 100%)' }}
-          >
-            <div className="absolute inset-0" style={{
-              backgroundImage: 'radial-gradient(ellipse at 20% 50%, rgba(0,245,255,0.08) 0%, transparent 60%), radial-gradient(ellipse at 80% 30%, rgba(139,92,246,0.07) 0%, transparent 60%)',
-            }} />
-            <img
-              src="https://readdy.ai/api/search-image?query=VR%20gaming%20center%20dark%20neon%20arcade%20room%20glowing%20headsets%20professional%20interior&width=1200&height=500&seq=vrgames2026a&orientation=landscape"
-              alt="Библиотека игр VR Club Paradox"
-              className="absolute inset-0 w-full h-full object-cover object-center"
-              onError={(e) => { e.currentTarget.style.opacity = '0'; }}
-            />
-            <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(1,0,20,0.1) 0%, rgba(1,0,20,0.55) 55%, rgba(1,0,20,1) 100%)' }} />
-          </div>
+<div
+  className="w-full h-52 sm:h-64 md:h-72 relative overflow-hidden"
+  style={{ background: 'linear-gradient(135deg, #010014 0%, #0a0025 30%, #060018 60%, #010014 100%)' }}
+>
+  <div className="absolute inset-0" style={{
+    backgroundImage: 'radial-gradient(ellipse at 20% 50%, rgba(0,245,255,0.08) 0%, transparent 60%), radial-gradient(ellipse at 80% 30%, rgba(139,92,246,0.07) 0%, transparent 60%)',
+  }} />
+  <img
+    src="/images/games/banner.jpg"
+    alt="Библиотека игр VR Club Paradox"
+    className="absolute inset-0 w-full h-full object-cover object-center"
+    loading="lazy"
+    onError={(e) => { e.currentTarget.style.opacity = '0'; }}
+  />
+  <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(1,0,20,0.1) 0%, rgba(1,0,20,0.55) 55%, rgba(1,0,20,1) 100%)' }} />
+</div>
 
           {/* Content below image — mobile */}
           <div className="relative px-5 pt-4 pb-7 text-center flex flex-col items-center md:hidden" style={{ zIndex: 2 }}>
