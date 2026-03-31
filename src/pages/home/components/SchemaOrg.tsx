@@ -14,13 +14,13 @@ const localBusinessSchema = {
   foundingDate: '2022',
   aggregateRating: {
     '@type': 'AggregateRating',
-    ratingValue: '5.0',
-    reviewCount: '127',
+    ratingValue: '4.8',
+    reviewCount: '119',
     bestRating: '5',
     worstRating: '1',
   },
   hasMap: 'https://yandex.ru/maps/org/paradoks/162318477180/',
-  image: 'https://readdy.ai/api/search-image?query=cyberpunk VR club neon lights gaming room immersive virtual reality futuristic&width=1200&height=630&seq=og01&orientation=landscape',
+  image: `${siteUrl}/images/og-image.jpg`,
   currenciesAccepted: 'RUB',
   paymentAccepted: 'Cash, Credit Card',
   address: {
