@@ -2,12 +2,21 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url=/">
     <script>
-        window.location.replace('/');
+        var path = window.location.pathname;
+        
+        // Если это админка — не перенаправляем, а грузим главный JS
+        if (path === '/admin' || path.startsWith('/admin/')) {
+            sessionStorage.setItem('admin_access', 'true');
+            var script = document.createElement('script');
+            script.type = 'module';
+            script.src = '/assets/index-BFEGtiKO.js';
+            document.body.appendChild(script);
+        } else {
+            // Для всех остальных — перенаправление на главную
+            window.location.replace('/');
+        }
     </script>
 </head>
-<body>
-    <p>Перенаправление на главную...</p>
-</body>
+<body>Загрузка...</body>
 </html>
