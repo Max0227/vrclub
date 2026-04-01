@@ -7,6 +7,7 @@ import SchemaOrgForum from './SchemaOrgForum';
 import { supabase } from '../../lib/supabase';
 
 const timeAgo = (dateStr: string) => {
+  if (!dateStr) return 'недавно';
   const diff = Date.now() - new Date(dateStr).getTime();
   const mins = Math.floor(diff / 60000);
   if (mins < 1) return 'только что';
@@ -67,6 +68,7 @@ const ForumPage = () => {
   
   // Загрузка данных
   const loadData = useCallback(async () => {
+    setLoading(true);
     try {
       const [cats, rec, users] = await Promise.all([
         fetchCategories(),
@@ -74,28 +76,57 @@ const ForumPage = () => {
         fetchTopUsers(10)
       ]);
       
-      // Загружаем все темы для поиска
-      const { data: threadsData, count: threadsCount } = await supabase
+      // Загружаем все темы для поиска (исправленный запрос)
+      const { data: threadsData, error: threadsError } = await supabase
         .from('forum_threads')
-        .select('*, forum_users!author_id(username, avatar_color)', { count: 'exact' })
+        .select(`
+          *,
+          forum_users!forum_threads_author_id_fkey (
+            username,
+            avatar_color
+          )
+        `)
         .order('last_post_at', { ascending: false });
       
+      if (threadsError) {
+        console.error('Ошибка загрузки тем:', threadsError);
+      }
+      
       // Загружаем общую статистику
-      const { count: usersCount } = await supabase
+      const { count: usersCount, error: usersError } = await supabase
         .from('forum_users')
         .select('*', { count: 'exact', head: true })
         .eq('is_approved', true);
       
-      const { count: postsCount } = await supabase
+      if (usersError) console.error('Ошибка загрузки пользователей:', usersError);
+      
+      const { count: postsCount, error: postsError } = await supabase
         .from('forum_posts')
         .select('*', { count: 'exact', head: true });
       
-      const formattedThreads = (threadsData || []).map(t => ({
-        ...t,
-        authorName: (t.forum_users as any)?.username || 'Unknown',
-        authorColor: (t.forum_users as any)?.avatar_color || '#00f5ff',
-        postCount: t.post_count || 1,
-      })) as ForumThread[];
+      if (postsError) console.error('Ошибка загрузки постов:', postsError);
+      
+      // Форматируем темы с правильными именами авторов
+      const formattedThreads: ForumThread[] = (threadsData || []).map(t => {
+        const author = t.forum_users as unknown as { username?: string; avatar_color?: string };
+        return {
+          id: t.id,
+          categoryId: t.category_id,
+          categorySlug: t.category_slug,
+          title: t.title,
+          content: t.content,
+          authorId: t.author_id,
+          authorName: author?.username || 'Пользователь',
+          authorColor: author?.avatar_color || '#00f5ff',
+          views: t.views || 0,
+          postCount: t.post_count || 1,
+          isPinned: t.is_pinned || false,
+          isLocked: t.is_locked || false,
+          lastPostAt: t.last_post_at || t.created_at,
+          lastPostAuthor: t.last_post_author,
+          createdAt: t.created_at,
+        };
+      });
       
       setCategories(cats);
       setAllThreads(formattedThreads);
@@ -103,9 +134,9 @@ const ForumPage = () => {
       setTopUsers(users);
       setTotalUsers(usersCount || 0);
       setTotalPosts(postsCount || 0);
-      setLoading(false);
     } catch (err) {
       console.error('Ошибка загрузки данных форума:', err);
+    } finally {
       setLoading(false);
     }
   }, [fetchCategories, fetchRecentThreads, fetchTopUsers]);
@@ -122,7 +153,7 @@ const ForumPage = () => {
     if (deferredSearchQuery.trim()) {
       const query = deferredSearchQuery.toLowerCase();
       threads = threads.filter(t => 
-        t.title.toLowerCase().includes(query) || 
+        t.title?.toLowerCase().includes(query) || 
         t.content?.toLowerCase().includes(query)
       );
     }
@@ -134,20 +165,23 @@ const ForumPage = () => {
     
     // Дополнительные фильтры
     if (filterBy === 'unanswered') {
-      threads = threads.filter(t => t.postCount <= 1);
+      threads = threads.filter(t => (t.postCount || 1) <= 1);
+    }
+    if (filterBy === 'popular') {
+      threads = threads.filter(t => (t.views || 0) > 100);
     }
     
     // Сортировка
     switch (sortBy) {
       case 'popular':
-        threads.sort((a, b) => b.views - a.views);
+        threads.sort((a, b) => (b.views || 0) - (a.views || 0));
         break;
       case 'most_commented':
-        threads.sort((a, b) => b.postCount - a.postCount);
+        threads.sort((a, b) => (b.postCount || 0) - (a.postCount || 0));
         break;
       case 'latest':
       default:
-        threads.sort((a, b) => new Date(b.lastPostAt).getTime() - new Date(a.lastPostAt).getTime());
+        threads.sort((a, b) => new Date(b.lastPostAt || b.createdAt).getTime() - new Date(a.lastPostAt || a.createdAt).getTime());
         break;
     }
     
@@ -182,9 +216,9 @@ const ForumPage = () => {
   }).length;
   
   const todayPosts = allThreads.reduce((acc, t) => {
-    const postDate = new Date(t.lastPostAt);
+    const postDate = new Date(t.lastPostAt || t.createdAt);
     if (postDate.toDateString() === new Date().toDateString()) {
-      return acc + (t.postCount || 0);
+      return acc + (t.postCount || 1);
     }
     return acc;
   }, 0);
@@ -221,7 +255,7 @@ const ForumPage = () => {
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-full flex items-center justify-center font-orbitron font-black text-xs"
                 style={{ background: `${forumUser.avatarColor}20`, border: `1px solid ${forumUser.avatarColor}60`, color: forumUser.avatarColor }}>
-                {forumUser.username.charAt(0).toUpperCase()}
+                {forumUser.username?.charAt(0).toUpperCase() || 'U'}
               </div>
               <span className="font-rajdhani text-sm font-bold text-white hidden sm:block">{forumUser.username}</span>
             </div>
@@ -265,7 +299,7 @@ const ForumPage = () => {
                   <div className="font-orbitron font-black text-xl md:text-2xl" style={{ color: stat.color }}>
                     {typeof stat.value === 'number' ? stat.value.toLocaleString() : stat.value}
                   </div>
-                  <div className="font-rajdhani text-xs flex items-center gap-1" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                  <div className="font-rajdhani text-xs flex items-center gap-1 justify-center" style={{ color: 'rgba(255,255,255,0.5)' }}>
                     <i className={stat.icon} style={{ fontSize: '10px' }} />
                     {stat.label}
                   </div>
@@ -321,7 +355,7 @@ const ForumPage = () => {
               >
                 Все
               </button>
-              {categories.slice(0, 6).map(cat => (
+              {categories.slice(0, 8).map(cat => (
                 <button
                   key={cat.slug}
                   onClick={() => setSelectedCategory(cat.slug)}
@@ -415,11 +449,10 @@ const ForumPage = () => {
                   <Link
                     key={t.id}
                     to={`/forum/thread/${t.id}`}
-                    className="block rounded-xl cursor-pointer transition-all duration-200 animate-fadeIn"
+                    className="block rounded-xl cursor-pointer transition-all duration-200"
                     style={{
                       background: 'rgba(255,255,255,0.02)',
                       border: `1px solid ${t.isPinned ? 'rgba(0,245,255,0.25)' : 'rgba(255,255,255,0.06)'}`,
-                      animationDelay: `${index * 30}ms`,
                     }}
                     onMouseEnter={e => { e.currentTarget.style.background = 'rgba(0,245,255,0.04)'; e.currentTarget.style.transform = 'translateX(4px)'; }}
                     onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.02)'; e.currentTarget.style.transform = 'translateX(0)'; }}
@@ -427,7 +460,7 @@ const ForumPage = () => {
                     <div className="flex items-start gap-4 p-4">
                       <div className="w-10 h-10 rounded-full flex items-center justify-center font-orbitron font-black flex-shrink-0"
                         style={{ fontSize: '13px', background: `${t.authorColor}18`, border: `2px solid ${t.authorColor}40`, color: t.authorColor }}>
-                        {t.authorName.charAt(0).toUpperCase()}
+                        {t.authorName?.charAt(0).toUpperCase() || '?'}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1 flex-wrap">
@@ -461,7 +494,7 @@ const ForumPage = () => {
                         </div>
                         <div className="flex items-center gap-1 mt-1 text-white/25">
                           <i className="ri-eye-line" style={{ fontSize: '10px' }} />
-                          <span className="font-mono-tech" style={{ fontSize: '10px' }}>{t.views.toLocaleString()}</span>
+                          <span className="font-mono-tech" style={{ fontSize: '10px' }}>{t.views?.toLocaleString() || 0}</span>
                         </div>
                       </div>
                     </div>
