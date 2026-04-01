@@ -576,3 +576,278 @@ h1, h2, h3, h4, h5, h6, .font-orbitron {
   margin-bottom: 6px;
   text-transform: uppercase;
 }
+
+/* ============================================
+   FORUM ANIMATIONS (ADDED)
+   ============================================ */
+
+/* Fade In Animation for Forum Threads */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
+}
+
+/* Stagger Animation for List Items */
+.animate-fadeIn-stagger {
+  animation: fadeIn 0.3s ease-out forwards;
+  opacity: 0;
+}
+
+/* Hover Glow Animation for Forum Cards */
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(0, 245, 255, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(0, 245, 255, 0.4);
+  }
+}
+
+.forum-card-glow {
+  transition: all 0.3s ease;
+}
+.forum-card-glow:hover {
+  animation: glowPulse 1s ease-in-out infinite;
+}
+
+/* Search Input Focus Animation */
+@keyframes searchGlow {
+  0% {
+    box-shadow: 0 0 0px rgba(0, 245, 255, 0);
+    border-color: rgba(0, 245, 255, 0.2);
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(0, 245, 255, 0.2);
+    border-color: rgba(0, 245, 255, 0.8);
+  }
+}
+
+.search-input-focus {
+  animation: searchGlow 0.3s ease-out forwards;
+}
+
+/* Pagination Button Hover */
+@keyframes pageButtonPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.pagination-btn-active {
+  animation: pageButtonPulse 0.2s ease-out;
+}
+
+/* Filter Button Active Animation */
+@keyframes filterActivate {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.filter-btn-active {
+  animation: filterActivate 0.2s ease-out;
+}
+
+/* Loading Spinner Enhanced */
+@keyframes spinFast {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner-fast {
+  animation: spinFast 0.6s linear infinite;
+}
+
+/* Skeleton Loading Animation */
+@keyframes skeletonPulse {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.skeleton-loading {
+  animation: skeletonPulse 1.2s ease-in-out infinite;
+}
+
+/* Forum Stats Counter Animation */
+@keyframes countUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stat-number-animate {
+  animation: countUp 0.4s ease-out forwards;
+}
+
+/* Tooltip Animation */
+@keyframes tooltipFade {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tooltip-animate {
+  animation: tooltipFade 0.2s ease-out forwards;
+}
+
+/* Success Checkmark Animation */
+@keyframes checkmarkPop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.checkmark-pop {
+  animation: checkmarkPop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+/* Error Shake Animation */
+@keyframes shakeError {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-3px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(3px);
+  }
+}
+
+.error-shake {
+  animation: shakeError 0.4s ease-in-out;
+}
+
+/* Notification Badge Pulse */
+@keyframes badgePulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+}
+
+.badge-pulse {
+  animation: badgePulse 1s ease-in-out infinite;
+}
+
+/* Forum Category Icon Hover */
+@keyframes iconFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.category-icon-hover:hover i {
+  animation: iconFloat 0.3s ease-in-out;
+}
+
+/* Thread Card Entrance Animation */
+.thread-card-enter {
+  animation: fadeIn 0.3s ease-out forwards;
+  opacity: 0;
+}
+
+/* Slide In Animation for Sidebar */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.slide-in-right {
+  animation: slideInRight 0.4s ease-out forwards;
+}
+
+/* Scale In Animation for Modals */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.scale-in {
+  animation: scaleIn 0.2s ease-out forwards;
+}
+
+/* Responsive Animation Adjustments */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fadeIn,
+  .animate-fadeIn-stagger,
+  .forum-card-glow:hover,
+  .stat-number-animate,
+  .thread-card-enter,
+  .slide-in-right,
+  .scale-in {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
